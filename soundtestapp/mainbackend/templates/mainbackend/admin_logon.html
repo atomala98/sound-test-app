@@ -2,7 +2,7 @@
 {% block title %}Index{% endblock %}
 {% block start %}Login to internal admin panel{% endblock %}
 {% block body %}
-<form action="/test" method="post">
+<form action="" method="post">
     {% csrf_token %}
     <label for="First name">Login:</label></br>
     {{ form.login }} </br>

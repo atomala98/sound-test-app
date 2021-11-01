@@ -2,14 +2,14 @@
 {% block title %}Index{% endblock %}
 {% block start %}Complete the form{% endblock %}
 {% block body %}
-<form action="/test" method="post">
+<form action="" method="post">
     {% csrf_token %}
     <label for="First name">First name:</label></br>
     {{ form.first_name }} </br>
     <label for="Last name">Last name:</label></br>
     {{ form.last_name }} </br>
     <label for="Birth date">Birth date:</label></br>
-    {{ form.birth_date }} </br>
+    {{ form.start_date }} </br>
     <label for="Gender">Gender:</label></br>
     {{ form.gender }} </br></br>
     <input type="submit" value="Submit">
