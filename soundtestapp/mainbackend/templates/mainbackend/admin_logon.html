@@ -1,0 +1,13 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Login to internal admin panel{% endblock %}
+{% block body %}
+<form action="/test" method="post">
+    {% csrf_token %}
+    <label for="First name">Login:</label></br>
+    {{ form.login }} </br>
+    <label for="Last name">Password:</label></br>
+    {{ form.password }} </br> </br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
