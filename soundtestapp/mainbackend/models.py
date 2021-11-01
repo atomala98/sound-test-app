@@ -25,8 +25,12 @@ class Test(models.Model):
 
 class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
-    test_id = models.ForeignKey(Test, on_delete=models.CASCADE)
-
+    test1_id = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
+    STATUS_TYPES = (
+        ('O', 'Open'),
+        ('C', 'Close')
+    )
+    status = models.CharField(max_length=1, choices=STATUS_TYPES)
 
 class ExaminationResult(models.Model):
     person_id = models.ForeignKey(ExaminedPerson, on_delete=models.CASCADE)

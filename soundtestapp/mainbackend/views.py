@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import ExaminationResult, ExaminedPerson
+from .models import ExaminationResult, ExaminedPerson,Exam
 from django.template import loader
 from django.db.models import Q
 from .forms import *
@@ -23,10 +23,10 @@ def index(request):
 
 
 def welcome(request):
-    print('asdasdasd')
+    exams = Exam.objects.filter(status="O")
     if request.session.get('first_name'):
         name = request.session.get('first_name')
-        return render(request, 'mainbackend/welcome.html', {'name': name})
+        return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams})
     else:
         return redirect('/')
 
