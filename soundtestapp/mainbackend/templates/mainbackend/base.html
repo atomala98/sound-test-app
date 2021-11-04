@@ -20,7 +20,7 @@
                 {% if user_login != None %}
                 <a class="navbar-brand" href="/interrupt">Stop exam</a> 
                 {% endif %}
-                {% if first_name != None %}
+                {% if admin != None %}
                 <a class="navbar-brand" href="/internal/logout">Logout</a>  
                 {% endif %}
         </nav>
@@ -30,7 +30,9 @@
             <h1 class="display-4">{% block start %}{% endblock %}</h1>
         </div>
         {% if message %}
-            {{ message }}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
         {% endif %}
         {% block body %}{% endblock %}
     </div>

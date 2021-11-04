@@ -19,6 +19,12 @@ def login(request):
                     request.session['admin'] = {}
                     request.session['admin']['login'] = login
                     return redirect('admin_panel')
+                else:
+                    message = "Wrong password"
+                    return render(request, 'mainbackend/admin_logon.html', {'form': form, 'message': message})
+            else:
+                message = f"No account with login {login}"
+                return render(request, 'mainbackend/admin_logon.html', {'form': form, 'message': message})
     return render(request, 'mainbackend/admin_logon.html', {'form': form})
 
 

@@ -17,8 +17,6 @@ def index(request):
             person = ExaminedPerson(**form.cleaned_data)
             person.save()
             return redirect('/welcome/')
-    else:
-        form = RegisterForm()
     return render(request, 'mainbackend/index.html', {'form': form, 'user_login': request.session.get('person')})
 
 
