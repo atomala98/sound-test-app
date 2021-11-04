@@ -1,4 +1,5 @@
 from django import forms
+from .models import Test
 
 class RegisterForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=30)
@@ -10,3 +11,8 @@ class RegisterForm(forms.Form):
 class AdminLoginForm(forms.Form):
     login = forms.CharField(label="Login", max_length=30)
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
+    
+
+class CreateExam(forms.Form):
+    exam_name = forms.CharField(label="Exam Name", max_length=30)
+    tests = forms.ModelChoiceField(label='Tests', queryset=Test.objects.all())

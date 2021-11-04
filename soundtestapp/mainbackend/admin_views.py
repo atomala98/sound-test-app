@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import ExaminationResult, AdminACC
+from .models import ExaminationResult, AdminACC, Test, Exam
 from django.template import loader
 from .forms import *
 
 def login(request):
-    print(request.session.__dict__)
+    if request.session['admin']:
+        return redirect('admin_panel')
     form = AdminLoginForm()
     if request.method == 'POST':
         form = AdminLoginForm(request.POST)
@@ -22,13 +23,33 @@ def login(request):
 
 
 def admin_panel(request):
-    print(request.session.__dict__)
+    if not request.session['admin']:
+        return redirect('login')
     login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)[0]
-    first_name = admin.first_name
-    last_name = admin.last_name
-    return render(request, 'mainbackend/admin_panel.html', {'first_name': first_name, 'last_name': last_name})
+    return render(request, 'mainbackend/admin_panel.html', {'admin': admin})
 
+
+def create_exam(request):
+    if not request.session['admin']:
+        return redirect('login')
+    login = request.session['admin']['login']
+    admin = AdminACC.objects.filter(login = login)[0]
+    form = CreateExam()
+    if request.method == 'POST':
+        form = CreateExam(request.POST)
+        if form.is_valid():
+            exam_name = form.cleaned_data['exam_name']
+            test1_id = Test.objects.filter(id=request.POST['tests'][0])[0]
+            if not Exam.objects.filter(exam_name=exam_name):
+                exam = Exam(exam_name=exam_name, test1_id=test1_id, status="O")
+                exam.save()
+                return redirect('admin_panel')
+            else:
+                message = 'Test name already taken'
+                return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'message': message})
+    return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
+    
 
 def logout(request):
     request.session['admin'] = None
