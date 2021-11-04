@@ -17,7 +17,12 @@
                 {% comment %} <a class="navbar-brand" href="/groups">Groups</a>
                 <a class="navbar-brand" href="/messages">Messages</a>
                 <a class="navbar-brand" href="/logout">Logout</a> {% endcomment%}
+                {% if user_login != None %}
                 <a class="navbar-brand" href="/interrupt">Stop exam</a> 
+                {% endif %}
+                {% if first_name != None %}
+                <a class="navbar-brand" href="/internal/logout">Logout</a>  
+                {% endif %}
         </nav>
     </header>
     <div class="container">

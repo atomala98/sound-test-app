@@ -7,6 +7,6 @@ class RegisterForm(forms.Form):
     gender = forms.ChoiceField(label='Gender', choices=[('M', 'M'), ('F', 'F')])
 
 
-class AdminLogonForm(forms.Form):
+class AdminLoginForm(forms.Form):
     login = forms.CharField(label="Login", max_length=30)
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
