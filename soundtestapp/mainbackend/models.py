@@ -23,9 +23,14 @@ class Test(models.Model):
         return "Test: " + str(self.test_name)
 
 
+class TestType(models.Model):
+    test_type_name = models.CharField(max_length=100)
+
+
 class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
     test1_id = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
+    test1_type = models.ForeignKey(TestType, on_delete=models.CASCADE, null=True)
     STATUS_TYPES = (
         ('O', 'Open'),
         ('C', 'Close')

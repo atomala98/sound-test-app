@@ -8,6 +8,7 @@ from .forms import *
 def index(request):
     if request.session.get('person'):
         return redirect('/welcome/')
+    form = RegisterForm()
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -21,15 +22,14 @@ def index(request):
 
 
 def welcome(request):
+    if not request.session.get('person'):
+        return redirect('/')
     exams = Exam.objects.filter(status="O")
     if request.method == 'POST':
         exam_id = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0]
         return redirect('/welcome/')
-    if request.session.get('person'):
-        name = request.session.get('person').get('first_name')
-        return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams, 'user_login': request.session.get('person')})
-    else:
-        return redirect('/')
+    name = request.session.get('person').get('first_name')
+    return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams, 'user_login': request.session.get('person')})
 
 
 def interrupt(request):
