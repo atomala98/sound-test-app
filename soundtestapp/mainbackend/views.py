@@ -27,7 +27,8 @@ def welcome(request):
     exams = Exam.objects.filter(status="O")
     if request.method == 'POST':
         exam_id = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0]
-        return redirect('/welcome/')
+        request.session['person']['test_no'] = 1
+        return redirect('exam_handle', exam_id=exam_id[5:], test_no=1)
     name = request.session.get('person').get('first_name')
     return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams, 'user_login': request.session.get('person')})
 
@@ -41,3 +42,13 @@ def interrupt(request):
     person.delete()
     request.session['person'] = None
     return redirect('/')
+
+def exam_handle(request, exam_id, test_no):
+    exam = Exam.objects.filter(exam_name=exam_id)[0]
+    tests = list(filter(lambda a: 'test' in a, exam.__dict__))
+    test = exam.__dict__[f'test{test_no}_id_id']
+    test_type = exam.__dict__[f'test{test_no}_type_id']
+    return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
+
+def make_test(request, exam_id, test_id, test_type_id, test_no):
+    return render(request, 'mainbackend/make_test.html', {'test_id': test_id, 'user_login': request.session.get('person')})

@@ -37,9 +37,13 @@ class Exam(models.Model):
     )
     status = models.CharField(max_length=1, choices=STATUS_TYPES)
 
+class Results(models.Model):
+    test1_result = models.CharField(max_length=3)
+
 class ExaminationResult(models.Model):
     person_id = models.ForeignKey(ExaminedPerson, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE, null=True)
+    results_id = models.ForeignKey(Results, on_delete=models.CASCADE, null=True)
     start_date = models.DateTimeField('Start date', null=True)
     end_date = models.DateTimeField('End date', null=True)
 

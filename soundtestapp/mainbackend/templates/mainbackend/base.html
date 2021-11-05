@@ -30,9 +30,11 @@
             <h1 class="display-4">{% block start %}{% endblock %}</h1>
         </div>
         {% if message %}
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            </div>
+            {% for i in message %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
         {% block body %}{% endblock %}
     </div>
