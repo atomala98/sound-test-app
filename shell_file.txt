@@ -1,1 +1,1 @@
-exec(open(PUT FILENAME HERE).read())
+exec(open('shl_scripts\FILENAME').read())

@@ -1,0 +1,16 @@
+Persons
+
+Test
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66BB0>, 'id': 3, 'test_name': 'Test_test', 'test_description': 'Test_description'}
+TestType
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66AF0>, 'id': 1, 'test_type_name': 'Test_type_test', 'test_type_description': 'Test_type_description'}
+Exam
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA669D0>, 'id': 5, 'exam_name': 'asd', 'test1_id_id': 3, 'test1_type_id': None, 'status': 'O'}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66A30>, 'id': 6, 'exam_name': 'asdf', 'test1_id_id': 3, 'test1_type_id': 1, 'status': 'O'}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66970>, 'id': 7, 'exam_name': 'Test_2', 'test1_id_id': 3, 'test1_type_id': 1, 'status': 'O'}
+Results
+
+ExaminationResult
+
+AdminACC
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66BE0>, 'id': 2, 'login': 'Admin', 'password': '1234', 'first_name': 'Admin', 'last_name': 'Account'}
+AdminToExam
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66A60>, 'id': 1, 'admin_id_id': 2, 'exam_id_id': 5}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA669A0>, 'id': 2, 'admin_id_id': 2, 'exam_id_id': 6}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA668E0>, 'id': 3, 'admin_id_id': 2, 'exam_id_id': 7}
