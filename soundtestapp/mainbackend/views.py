@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import ExaminationResult, ExaminedPerson,Exam
+from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType
 from django.template import loader
 from django.db.models import Q
 from .forms import *
@@ -51,4 +51,6 @@ def exam_handle(request, exam_id, test_no):
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
 def make_test(request, exam_id, test_id, test_type_id, test_no):
-    return render(request, 'mainbackend/make_test.html', {'test_id': test_id, 'user_login': request.session.get('person')})
+    test = Test.objects.filter(id=test_id)
+    test_type = TestType.objects.filter(id=test_type_id)
+    return render(request, 'mainbackend/make_test.html', {'test': test, 'user_login': request.session.get('person')})

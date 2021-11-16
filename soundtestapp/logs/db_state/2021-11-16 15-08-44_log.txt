@@ -1,0 +1,1 @@
+asd{'_state': <django.db.models.base.ModelState object at 0x0000022425605A30>, 'id': 2, 'login': 'Admin', 'password': '1234', 'first_name': 'Admin', 'last_name': 'Account'}
