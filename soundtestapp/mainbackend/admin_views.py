@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import ExaminationResult, AdminACC, Test, Exam
+from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam
 from django.template import loader
 from .forms import *
 
 def login(request):
-    if request.session['admin']:
+    if request.session.get('admin'):
         return redirect('admin_panel')
     form = AdminLoginForm()
     if request.method == 'POST':
@@ -29,7 +29,7 @@ def login(request):
 
 
 def admin_panel(request):
-    if not request.session['admin']:
+    if not request.session.get('admin'):
         return redirect('login')
     login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)[0]
@@ -37,7 +37,7 @@ def admin_panel(request):
 
 
 def create_exam(request):
-    if not request.session['admin']:
+    if not request.session.get('admin'):
         return redirect('login')
     login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)[0]
@@ -50,6 +50,8 @@ def create_exam(request):
             if not Exam.objects.filter(exam_name=exam_name):
                 exam = Exam(exam_name=exam_name, test1_id=test1_id, status="O")
                 exam.save()
+                admin_to_exam = AdminToExam(admin_id=admin, exam_id=exam)
+                admin_to_exam.save()
                 return redirect('admin_panel')
             else:
                 message = 'Test name already taken'

@@ -1,0 +1,15 @@
+Persons
+
+Test
+
+TestType
+
+Exam
+
+Results
+
+ExaminationResult
+
+AdminACC
+{'_state': <django.db.models.base.ModelState object at 0x000002325D52D610>, 'id': 2, 'login': 'Admin', 'password': '1234', 'first_name': 'Admin', 'last_name': 'Account'}
+AdminToExam
