@@ -18,6 +18,7 @@ class ExaminedPerson(models.Model):
 
 class Test(models.Model):
     test_name = models.CharField(max_length=100)
+    test_description = models.CharField(max_length=1000, null=True)
 
     def __str__(self):
         return "Test: " + str(self.test_name)
@@ -25,6 +26,7 @@ class Test(models.Model):
 
 class TestType(models.Model):
     test_type_name = models.CharField(max_length=100)
+    test_type_description = models.CharField(max_length=1000, null=True)
 
 
 class Exam(models.Model):
