@@ -2,7 +2,7 @@
 {% block title %}Index{% endblock %}
 {% block start %}Complete the form{% endblock %}
 {% block body %}
-Test number {{ test_no }}. </br>
-Test covers {{ test.name }} using {{ test_type.name }}.
+<h4>Test {{ test_no }}/{{ exam.test_amount }}.</h4>
+<h4>Test covers {{ test.name }} using {{ test_type.name }}.</h4>
 <h2 test-align="center">{{ test_type.question }}</h2>
 {% endblock %}

@@ -48,8 +48,9 @@ def create_exam(request):
             exam_name = form.cleaned_data['exam_name']
             test1_id = Test.objects.filter(id=request.POST['test1'][0])[0]
             test1_type = TestType.objects.filter(id=request.POST['test1_type'][0])[0]
+            test_amount = len([x for x in [test1_id] if x is not None])
             if not Exam.objects.filter(exam_name=exam_name):
-                exam = Exam(exam_name=exam_name, test1_id=test1_id, test1_type=test1_type, status="O")
+                exam = Exam(exam_name=exam_name, test1_id=test1_id, test1_type=test1_type, test_amount=test_amount, status="O")
                 exam.save()
                 admin_to_exam = AdminToExam(admin_id=admin, exam_id=exam)
                 admin_to_exam.save()

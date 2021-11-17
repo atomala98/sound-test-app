@@ -37,6 +37,7 @@ class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
     test1_id = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
     test1_type = models.ForeignKey(TestType, on_delete=models.CASCADE, null=True)
+    test_amount = models.IntegerField(null=True)
     STATUS_TYPES = (
         ('O', 'Open'),
         ('C', 'Close')
