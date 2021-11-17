@@ -21,10 +21,10 @@ def login(request):
                     return redirect('admin_panel')
                 else:
                     message = "Wrong password"
-                    return render(request, 'mainbackend/admin_logon.html', {'form': form, 'message': message})
+                    return render(request, 'mainbackend/admin_logon.html', {'form': form, 'messages': [message]})
             else:
                 message = f"No account with login {login}"
-                return render(request, 'mainbackend/admin_logon.html', {'form': form, 'message': message})
+                return render(request, 'mainbackend/admin_logon.html', {'form': form, 'messages': [message]})
     return render(request, 'mainbackend/admin_logon.html', {'form': form})
 
 
@@ -56,7 +56,7 @@ def create_exam(request):
                 return redirect('admin_panel')
             else:
                 message = 'Test name already taken'
-                return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'message': message})
+                return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'messages': [message]})
     return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
     
 

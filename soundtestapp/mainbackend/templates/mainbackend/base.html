@@ -29,8 +29,8 @@
         <div class="page-header">
             <h1 class="display-4">{% block start %}{% endblock %}</h1>
         </div>
-        {% if message %}
-            {% for i in message %}
+        {% if messages %}
+            {% for message in messages %}
                 <div class="alert alert-danger" role="alert">
                     {{ message }}
                 </div>
