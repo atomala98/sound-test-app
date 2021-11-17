@@ -51,6 +51,7 @@ def exam_handle(request, exam_id, test_no):
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
 def make_test(request, exam_id, test_id, test_type_id, test_no):
-    test = Test.objects.filter(id=test_id)
-    test_type = TestType.objects.filter(id=test_type_id)
-    return render(request, 'mainbackend/make_test.html', {'test': test, 'user_login': request.session.get('person')})
+    test = Test.objects.filter(id=test_id)[0]
+    test_type = TestType.objects.filter(id=test_type_id)[0]
+    print(test.name, test_type.name)
+    return render(request, 'mainbackend/make_test.html', {'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})

@@ -1,8 +1,8 @@
 from mainbackend.models import Exam, Test, TestType
 
 settings = {
-    "test_name": "Test_test",
-    "test_description": "Test_description"
+    "name": "Frequency difference test",
+    "description": "This is frequency difference test"
 }
 
 t = Test(**settings)

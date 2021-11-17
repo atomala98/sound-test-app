@@ -1,10 +1,10 @@
 Persons
 
 Test
-{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA897C0>, 'id': 3, 'test_name': 'Test_test', 'test_description': 'Test_description'}
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA897C0>, 'id': 3, 'name': 'Test_test', 'description': 'description'}
 
 TestType
-{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA89700>, 'id': 1, 'test_type_name': 'Test_type_test', 'test_type_description': 'Test_type_description'}
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA89700>, 'id': 1, 'name': 'Test_type_test', 'description': 'description'}
 
 Exam
 

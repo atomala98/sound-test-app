@@ -1,9 +1,9 @@
 Persons
 
 Test
-{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66BB0>, 'id': 3, 'test_name': 'Test_test', 'test_description': 'Test_description'}
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66BB0>, 'id': 3, 'name': 'Test_test', 'description': 'description'}
 TestType
-{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66AF0>, 'id': 1, 'test_type_name': 'Test_type_test', 'test_type_description': 'Test_type_description'}
+{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66AF0>, 'id': 1, 'name': 'Test_type_test', 'description': 'description'}
 Exam
 {'_state': <django.db.models.base.ModelState object at 0x000001FD4EA669D0>, 'id': 5, 'exam_name': 'asd', 'test1_id_id': 3, 'test1_type_id': None, 'status': 'O'}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66A30>, 'id': 6, 'exam_name': 'asdf', 'test1_id_id': 3, 'test1_type_id': 1, 'status': 'O'}{'_state': <django.db.models.base.ModelState object at 0x000001FD4EA66970>, 'id': 7, 'exam_name': 'Test_2', 'test1_id_id': 3, 'test1_type_id': 1, 'status': 'O'}
 Results

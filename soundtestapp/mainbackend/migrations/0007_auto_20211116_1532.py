@@ -12,12 +12,12 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='test',
-            name='test_description',
+            name='description',
             field=models.CharField(max_length=1000, null=True),
         ),
         migrations.AddField(
             model_name='testtype',
-            name='test_type_description',
+            name='description',
             field=models.CharField(max_length=1000, null=True),
         ),
     ]
