@@ -4,6 +4,8 @@ from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType
 from django.template import loader
 from django.db.models import Q
 from .forms import *
+from .audio_gen import *
+from time import strftime, gmtime
 
 def index(request):
     if request.session.get('person'):
@@ -54,4 +56,6 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     test = Test.objects.filter(id=test_id)[0]
     test_type = TestType.objects.filter(id=test_type_id)[0]
-    return render(request, 'mainbackend/make_test.html', {'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})
+    dt_gmt = strftime("%Y-%m-%d %H-%M-%S", gmtime())
+    filename = frequency_difference_test(5, request.session.get('person').get('first_name'), dt_gmt)
+    return render(request, 'mainbackend/make_test.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})

@@ -46,12 +46,15 @@ def frequency_difference_test(delta_freq, username, time):
 
     audio = np.concatenate((note, notes_break, pitched_note, notes_break))
 
-    save_to_file(username, audio, time)
+    return save_to_file(username, audio, time)
 
 # saving wave to file
 
 def save_to_file(username, audio, time):
-    wavio.write(f"temp_files/{username}---{time}.wav", audio, FS, sampwidth=2)
+    filename = f"static/mainbackend/{username}---{time}.wav"
+    wavio.write(filename, audio, FS, sampwidth=2)
+
+    return filename
 
 
 if __name__ == "__main__":
