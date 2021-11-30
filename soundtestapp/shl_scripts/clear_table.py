@@ -1,5 +1,5 @@
 from mainbackend.models import *
 
-name = "TestType"
+name = "Person"
 
 exec(f"{name}.objects.all().delete()")

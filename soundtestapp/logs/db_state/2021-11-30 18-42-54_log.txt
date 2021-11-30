@@ -1,0 +1,49 @@
+Persons
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936DC0>, 'id': 64, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936D30>, 'id': 65, 'first_name': 'Andrzej', 'last_name': 'Franczak', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936CA0>, 'id': 66, 'first_name': 'Andrzej', 'last_name': 'Franczak', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936C10>, 'id': 67, 'first_name': 'Andrzej', 'last_name': 'Franczak', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936B80>, 'id': 69, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936AF0>, 'id': 70, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936A60>, 'id': 71, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9369D0>, 'id': 72, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936940>, 'id': 73, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9368B0>, 'id': 74, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936820>, 'id': 75, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936790>, 'id': 76, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936700>, 'id': 77, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936670>, 'id': 78, 'first_name': 'Piotr', 'last_name': 'Adryan', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9365E0>, 'id': 79, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936550>, 'id': 80, 'first_name': 'qwer', 'last_name': 'qwer', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9364C0>, 'id': 81, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936430>, 'id': 82, 'first_name': 'micha³', 'last_name': 'cyrkowski', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9363A0>, 'id': 83, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936310>, 'id': 84, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936280>, 'id': 85, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9361F0>, 'id': 86, 'first_name': 'Grzegorz', 'last_name': 'Franczak', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936160>, 'id': 87, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9360D0>, 'id': 88, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936040>, 'id': 89, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D901A00>, 'id': 90, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D901D90>, 'id': 92, 'first_name': 'damian', 'last_name': 'go³da', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D901D30>, 'id': 93, 'first_name': 'asdqwe', 'last_name': 'asdqwe', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+
+Test
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936BB0>, 'id': 6, 'name': 'Frequency difference test', 'description': 'This is frequency difference test', 'function': 'frequency_difference_test', 'first_btn': 'First one', 'second_btn': 'Second one'}
+
+TestType
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936B20>, 'id': 2, 'name': 'Method of Limits', 'description': 'Method of limits is method', 'question': 'Which sound is higher?'}
+
+Exam
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936A00>, 'id': 16, 'exam_name': 'Real_exam', 'test1_id_id': 6, 'test1_type_id': 2, 'test_amount': 1, 'status': 'O'}
+
+Results
+
+ExaminationResult
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D9369A0>, 'id': 1, 'person_id_id': 93, 'exam_id_id': None, 'results_id_id': None, 'start_date': None, 'end_date': None}
+
+AdminACC
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936A90>, 'id': 3, 'login': 'Admin', 'password': '1234', 'first_name': 'Admin', 'last_name': 'Account'}
+
+AdminToExam
+{'_state': <django.db.models.base.ModelState object at 0x000001F67D936940>, 'id': 12, 'admin_id_id': 3, 'exam_id_id': 16}

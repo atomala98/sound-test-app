@@ -8,6 +8,7 @@ from time import strftime, gmtime
 from .person import *
 
 def index(request):
+    request.session['person'] = None
     if request.session.get('person'):
         return redirect('/welcome/')
     form = RegisterForm()
@@ -65,13 +66,15 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
     test = Test.objects.filter(id=test_id)[0]
     test_type = TestType.objects.filter(id=test_type_id)[0]
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
-    filename, choice = eval(f"{test.function}(randomise_delta(request.session['person'][f'test{test_no}']['delta']), request.session.get('person').get('first_name'), dt_gmt)")
-    filename = filename.split('/')[-1]
+    if request.method == "GET":
+        filename, request.session['person'][f'test{test_no}']['choice'] = eval(f"{test.function}(randomise_delta(request.session['person'][f'test{test_no}']['delta']), request.session.get('person').get('first_name'), dt_gmt)")
+        request.session.modified = True
+        filename = filename.split('/')[-1]
 
     if request.method == "POST":
         button = list(request.POST.keys())[1]
-        print(button, choice)
-        if button == choice:
+        print(button, request.session['person'][f'test{test_no}']['choice'])
+        if button == request.session['person'][f'test{test_no}']['choice']:
             request.session['person'][f'test{test_no}']['delta'] -= request.session['person'][f'test{test_no}']['step']
             request.session.modified = True
             return redirect('make_test', exam_id=exam_id, test_id=test_id, test_type_id=test_type_id, test_no=test_no)
@@ -83,5 +86,6 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
 def end_exam(request):
     if not request.session.get('person'):
         return redirect('/')
+    save_results(request, ExaminedPerson, Exam, ExaminationResult)
     request.session['person'] = None
     return render(request, 'mainbackend/end_exam.html')
