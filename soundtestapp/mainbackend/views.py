@@ -47,21 +47,33 @@ def exam_handle(request, exam_id, test_no):
         return redirect('end_exam') 
     test = exam.__dict__[f'test{test_no}_id_id']
     test_type = exam.__dict__[f'test{test_no}_type_id']
+    request.session['person'][f'test{test_no}'] = {
+        "test": test,
+        "test_type": test_type,
+        "delta": 5,
+        "step": 0.2,
+    }
+    request.session.modified = True
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
 
 def make_test(request, exam_id, test_id, test_type_id, test_no):
     if not request.session.get('person'):
         return redirect('/')
+        
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     test = Test.objects.filter(id=test_id)[0]
     test_type = TestType.objects.filter(id=test_type_id)[0]
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
-    filename, choice = eval(f"{test.function}(randomise_delta(5), request.session.get('person').get('first_name'), dt_gmt)")
+    filename, choice = eval(f"{test.function}(randomise_delta(request.session['person'][f'test{test_no}']['delta']), request.session.get('person').get('first_name'), dt_gmt)")
     filename = filename.split('/')[-1]
+
     if request.method == "POST":
         button = list(request.POST.keys())[1]
+        print(button, choice)
         if button == choice:
+            request.session['person'][f'test{test_no}']['delta'] -= request.session['person'][f'test{test_no}']['step']
+            request.session.modified = True
             return redirect('make_test', exam_id=exam_id, test_id=test_id, test_type_id=test_type_id, test_no=test_no)
         else:
             return redirect('end_exam')

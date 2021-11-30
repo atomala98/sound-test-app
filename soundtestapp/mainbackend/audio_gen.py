@@ -33,6 +33,7 @@ def linear_fade_out(note):
 # two sine waves with DELTA_F difference
 
 def frequency_difference_test(delta_freq, username, time):
+    print(delta_freq)
     frequency = BASE_FREQ
     seconds = 1  
     
@@ -50,8 +51,8 @@ def frequency_difference_test(delta_freq, username, time):
 
     audio = np.concatenate((note, notes_break, pitched_note, notes_break))
 
-    choice = 'first' if delta_freq > 0 else 'second'
-
+    choice = 'first' if delta_freq < 0 else 'second'
+    print(delta_freq, choice)
     return save_to_file(username, audio, time), choice
 
 # saving wave to file
