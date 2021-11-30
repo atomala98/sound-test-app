@@ -49,7 +49,10 @@ def frequency_difference_test(delta_freq, username, time):
     pitched_note = linear_fade_out(pitched_note)
 
     audio = np.concatenate((note, notes_break, pitched_note, notes_break))
-    return save_to_file(username, audio, time)
+
+    choice = 'first' if delta_freq > 0 else 'second'
+
+    return save_to_file(username, audio, time), choice
 
 # saving wave to file
 

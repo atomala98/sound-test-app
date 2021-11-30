@@ -13,12 +13,12 @@
 <body>
     <header class="site-header container">
         <nav class="navbar">
-            <a class="navbar-brand" href="">Sound Test App</a>
+            <a class="navbar-brand" href="..">Sound Test App</a>
                 {% comment %} <a class="navbar-brand" href="/groups">Groups</a>
                 <a class="navbar-brand" href="/messages">Messages</a>
                 <a class="navbar-brand" href="/logout">Logout</a> {% endcomment%}
                 {% if user_login != None %}
-                <a class="navbar-brand" href="/interrupt">Stop exam</a> 
+                <a class="navbar-brand" href="/interrupt/">Stop exam</a> 
                 {% endif %}
                 {% if admin != None %}
                 <a class="navbar-brand" href="/internal/logout">Logout</a>  

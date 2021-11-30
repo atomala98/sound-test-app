@@ -2,10 +2,10 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType
 from django.template import loader
-from django.db.models import Q
 from .forms import *
 from .audio_gen import *
 from time import strftime, gmtime
+from .person import *
 
 def index(request):
     if request.session.get('person'):
@@ -14,11 +14,7 @@ def index(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            request.session['person'] = {}
-            request.session['person']['first_name'] = form.cleaned_data['first_name']
-            request.session['person']['last_name'] = form.cleaned_data['last_name']
-            person = ExaminedPerson(**form.cleaned_data)
-            person.save()
+            create_person(request, form, ExaminedPerson)
             return redirect('/welcome/')
     return render(request, 'mainbackend/index.html', {'form': form, 'user_login': request.session.get('person')})
 
@@ -38,28 +34,42 @@ def welcome(request):
 def interrupt(request):
     if not request.session.get('person'):
         return redirect('/')
-    first_name = request.session.get('person').get('first_name')
-    last_name = request.session.get('person').get('last_name')
-    person = ExaminedPerson.objects.filter(Q(first_name = first_name) | Q(last_name = last_name))
-    person.delete()
-    request.session['person'] = None
+    del_person(request, ExaminedPerson)
     return redirect('/')
 
 
 def exam_handle(request, exam_id, test_no):
+    if not request.session.get('person'):
+        return redirect('/')
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     tests = list(filter(lambda a: 'test' in a, exam.__dict__))
+    if test_no > exam.test_amount:
+        return redirect('end_exam') 
     test = exam.__dict__[f'test{test_no}_id_id']
     test_type = exam.__dict__[f'test{test_no}_type_id']
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
 
 def make_test(request, exam_id, test_id, test_type_id, test_no):
+    if not request.session.get('person'):
+        return redirect('/')
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     test = Test.objects.filter(id=test_id)[0]
     test_type = TestType.objects.filter(id=test_type_id)[0]
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
-    filename = eval(f"{test.function}(5, request.session.get('person').get('first_name'), dt_gmt)").split('/')[-1]
+    filename, choice = eval(f"{test.function}(randomise_delta(5), request.session.get('person').get('first_name'), dt_gmt)")
+    filename = filename.split('/')[-1]
     if request.method == "POST":
-        print(request.POST)
+        button = list(request.POST.keys())[1]
+        if button == choice:
+            return redirect('make_test', exam_id=exam_id, test_id=test_id, test_type_id=test_type_id, test_no=test_no)
+        else:
+            return redirect('end_exam')
     return render(request, 'mainbackend/make_test.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})
+
+
+def end_exam(request):
+    if not request.session.get('person'):
+        return redirect('/')
+    request.session['person'] = None
+    return render(request, 'mainbackend/end_exam.html')
