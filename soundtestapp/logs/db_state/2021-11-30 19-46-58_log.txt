@@ -1,0 +1,23 @@
+Persons
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE037C0>, 'id': 98, 'first_name': 'Andrzej', 'last_name': 'Tomala', 'start_date': datetime.datetime(2021, 1, 1, 0, 0, tzinfo=<UTC>), 'gender': 'M'}
+
+Test
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE03850>, 'id': 7, 'name': 'Frequency difference test', 'description': 'This is frequency difference test', 'function': 'frequency_difference_test', 'first_btn': 'First one', 'second_btn': 'Second one'}
+
+TestType
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE03760>, 'id': 3, 'name': 'Method of Limits', 'description': 'Method of limits is method', 'question': 'Which sound is higher?'}
+
+Exam
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE03700>, 'id': 17, 'exam_name': 'Real_exam', 'test1_id_id': 7, 'test1_type_id': 3, 'test_amount': 1, 'status': 'O'}
+
+Results
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE038B0>, 'id': 2, 'test1_result': '5'}
+
+ExaminationResult
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE035E0>, 'id': 5, 'person_id_id': 98, 'exam_id_id': 17, 'results_id_id': 2, 'start_date': None, 'end_date': None}
+
+AdminACC
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE03AC0>, 'id': 4, 'login': 'Admin', 'password': '1234', 'first_name': 'Admin', 'last_name': 'Account'}
+
+AdminToExam
+{'_state': <django.db.models.base.ModelState object at 0x000002065AE036A0>, 'id': 13, 'admin_id_id': 4, 'exam_id_id': 17}

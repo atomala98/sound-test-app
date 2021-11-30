@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType
+from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType, Results
 from django.template import loader
 from .forms import *
 from .audio_gen import *
@@ -8,7 +8,6 @@ from time import strftime, gmtime
 from .person import *
 
 def index(request):
-    request.session['person'] = None
     if request.session.get('person'):
         return redirect('/welcome/')
     form = RegisterForm()
@@ -25,9 +24,11 @@ def welcome(request):
         return redirect('/')
     exams = Exam.objects.filter(status="O")
     if request.method == 'POST':
-        exam_id = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0]
+        exam_id = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0][5:]
         request.session['person']['test_no'] = 1
-        return redirect('exam_handle', exam_id=exam_id[5:], test_no=1)
+        request.session['person']['exam_id'] = exam_id
+        request.session.modified = True
+        return redirect('exam_handle', exam_id=exam_id, test_no=1)
     name = request.session.get('person').get('first_name')
     return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams, 'user_login': request.session.get('person')})
 
@@ -86,6 +87,6 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
 def end_exam(request):
     if not request.session.get('person'):
         return redirect('/')
-    save_results(request, ExaminedPerson, Exam, ExaminationResult)
+    save_results(request, ExaminedPerson, Exam, ExaminationResult, Results)
     request.session['person'] = None
     return render(request, 'mainbackend/end_exam.html')
