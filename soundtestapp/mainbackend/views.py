@@ -45,6 +45,7 @@ def interrupt(request):
     request.session['person'] = None
     return redirect('/')
 
+
 def exam_handle(request, exam_id, test_no):
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     tests = list(filter(lambda a: 'test' in a, exam.__dict__))
@@ -52,10 +53,13 @@ def exam_handle(request, exam_id, test_no):
     test_type = exam.__dict__[f'test{test_no}_type_id']
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
+
 def make_test(request, exam_id, test_id, test_type_id, test_no):
     exam = Exam.objects.filter(exam_name=exam_id)[0]
     test = Test.objects.filter(id=test_id)[0]
     test_type = TestType.objects.filter(id=test_type_id)[0]
-    dt_gmt = strftime("%Y-%m-%d %H-%M-%S", gmtime())
-    filename = frequency_difference_test(5, request.session.get('person').get('first_name'), dt_gmt)
+    dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+    filename = eval(f"{test.function}(5, request.session.get('person').get('first_name'), dt_gmt)").split('/')[-1]
+    if request.method == "POST":
+        print(request.POST)
     return render(request, 'mainbackend/make_test.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})

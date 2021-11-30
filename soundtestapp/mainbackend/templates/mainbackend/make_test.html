@@ -10,4 +10,9 @@
   <source src={% static "mainbackend/" %}{{ filename }} type="audio/wav">
   <p>If audio does not start, the <audio> HTML element is not supported in your browser.</p>
 </audio>
-{% endblock %}
+</br>
+<form action="" id='1' name='asd' method="post">
+  {% csrf_token %}
+  <input type="submit" name='first' value="{{ test.first_btn }}">
+  <input type="submit" name='second' value="{{ test.second_btn }}">
+</form>

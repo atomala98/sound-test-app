@@ -1,6 +1,7 @@
 import numpy as np
 from time import strftime, gmtime
 import wavio
+from random import randint
 
 SETTINGS = {
     'BASE_FREQ': 150,
@@ -13,6 +14,9 @@ FS = SETTINGS.get('FS')
 FADE_LEN = SETTINGS.get('FADE_LEN')
 
 # linear fade in/out
+
+def randomise_delta(delta):
+    return (2 * randint(0, 1) - 1) * delta
 
 def linear_fade_in(note):
     samples = FADE_LEN
@@ -45,15 +49,14 @@ def frequency_difference_test(delta_freq, username, time):
     pitched_note = linear_fade_out(pitched_note)
 
     audio = np.concatenate((note, notes_break, pitched_note, notes_break))
-
     return save_to_file(username, audio, time)
 
 # saving wave to file
 
 def save_to_file(username, audio, time):
-    filename = f"static/mainbackend/{username}---{time}.wav"
+    filename = f"mainbackend/static/mainbackend/{username}---{time}.wav"
     wavio.write(filename, audio, FS, sampwidth=2)
-
+    
     return filename
 
 
