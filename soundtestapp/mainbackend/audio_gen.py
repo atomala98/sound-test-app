@@ -4,7 +4,7 @@ import wavio
 from random import randint
 
 SETTINGS = {
-    'BASE_FREQ': 150,
+    'BASE_FREQ': 1000,
     'FS': 44100,
     "FADE_LEN": 1000
 }
@@ -49,7 +49,7 @@ def frequency_difference_test(delta_freq, username, time):
     pitched_note = linear_fade_in(pitched_note)
     pitched_note = linear_fade_out(pitched_note)
 
-    audio = np.concatenate((note, notes_break, pitched_note, notes_break))
+    audio = np.concatenate((note * 0.9, notes_break, pitched_note * 0.9, notes_break))
 
     choice = 'first' if delta_freq < 0 else 'second'
     print(delta_freq, choice)
