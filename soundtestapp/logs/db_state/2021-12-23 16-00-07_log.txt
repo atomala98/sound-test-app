@@ -1,0 +1,15 @@
+Persons
+
+Test
+
+TestType
+
+Exam
+
+Results
+
+ExaminationResult
+
+AdminACC
+
+AdminToExam
