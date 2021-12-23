@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam
 from django.template import loader
 from .forms import *
+from django.contrib.auth.hashers import check_password
 
 def login(request):
     if request.session.get('admin'):
@@ -15,7 +16,7 @@ def login(request):
             if admin:
                 admin = admin[0]
                 password = form.cleaned_data['password']
-                if admin.password == password: 
+                if check_password(password, admin.password): 
                     request.session['admin'] = {}
                     request.session['admin']['login'] = login
                     return redirect('admin_panel')

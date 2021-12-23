@@ -6,6 +6,7 @@ from .forms import *
 from .audio_gen import *
 from time import strftime, gmtime
 from .person import *
+from django.core.cache import cache
 
 def index(request):
     if request.session.get('person'):
