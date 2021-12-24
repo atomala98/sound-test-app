@@ -4,7 +4,7 @@ from .models import Test, TestType
 class RegisterForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=30)
     last_name = forms.CharField(label='Last name', max_length=30)
-    birth_date = forms.DateTimeField(label='Birth date', widget=forms.SelectDateWidget(years=(i for i in range(2015, 1899, -1))))
+    start_date = forms.DateTimeField(label='Birth date', widget=forms.SelectDateWidget(years=(i for i in range(2015, 1899, -1))))
     gender = forms.ChoiceField(label='Gender', choices=[('M', 'M'), ('F', 'F')])
 
 

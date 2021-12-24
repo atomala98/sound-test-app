@@ -1,0 +1,20 @@
+   
+services:
+  mainbackend:
+    build: 
+      context: .
+      dockerfile: soundtestapp/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+  file_api:
+    build: 
+      context: .
+      dockerfile: api-wav-file/Dockerfile
+    environment:
+      DEBUG: 1
+    volumes:
+      - .:/code
+    ports:
+      - "30000:30000"
