@@ -59,7 +59,6 @@ def exam_handle(request, exam_id, test_no):
     request.session.modified = True
     return redirect('make_test', exam_id=exam_id, test_id=test, test_type_id=test_type, test_no=test_no)
 
-
 def make_test(request, exam_id, test_id, test_type_id, test_no):
     if not request.session.get('person'):
         return redirect('/')
@@ -79,10 +78,11 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
         if button == request.session['person'][f'test{test_no}']['choice']:
             request.session['person'][f'test{test_no}']['delta'] -= request.session['person'][f'test{test_no}']['step']
             request.session.modified = True
+            
             return redirect('make_test', exam_id=exam_id, test_id=test_id, test_type_id=test_type_id, test_no=test_no)
         else:
             return redirect('end_exam')
-    return render(request, 'mainbackend/make_test.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})
+    return render(request, 'mainbackend/frequency_difference.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'test_type': test_type, 'user_login': request.session.get('person')})
 
 
 def end_exam(request):

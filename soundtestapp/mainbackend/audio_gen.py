@@ -58,7 +58,7 @@ def frequency_difference_test(delta_freq, username, time):
 # saving wave to file
 
 def save_to_file(username, audio, time):
-    filename = f"mainbackend/static/mainbackend/{username}---{time}.wav"
+    filename = f"mainbackend/static/mainbackend/frequency_difference/{username}---{time}.wav"
     wavio.write(filename, audio, FS, sampwidth=2)
     
     return filename

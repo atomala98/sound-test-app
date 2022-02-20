@@ -4,16 +4,7 @@
 {% block body %}
 <h4>Test {{ test_no }}/{{ exam.test_amount }}.</h4>
 <h4>Test covers {{ test.name }} using {{ test_type.name }}.</h4>
-<h2 test-align="center">{{ test_type.question }}</h2>
-<audio controls>
-  {% load static %}
-  <source src={% static "mainbackend/" %}{{ filename }} type="audio/wav">
-  <p>If audio does not start, the <audio> HTML element is not supported in your browser.</p>
-</audio>
-</br>
-<form action="" id='1' name='asd' method="post">
-  {% csrf_token %}
-  <input type="submit" name='first' value="{{ test.first_btn }}">
-  <input type="submit" name='second' value="{{ test.second_btn }}">
-</form>
+{% block test %}
+
+{% endblock %}
 {% endblock %}
