@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam
+from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam, MUSHRATestSets, Fileset
 from django.template import loader
 from .forms import *
 from django.contrib.auth.hashers import check_password
@@ -61,6 +61,44 @@ def create_exam(request):
                 return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'messages': [message]})
     return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
     
+    
+def add_files(request):
+    fileset_types_list = {
+        "MUSHRA": "add_files_MUSHRA"
+    }
+    
+    if request.method == 'POST':
+        form = AddFilesForm(request.POST)
+        if form.is_valid():
+            fileset_name = form.cleaned_data["fileset_name"]
+            fileset_type = form.cleaned_data["fileset_type"]
+            if Fileset.objects.filter(fileset_name=fileset_name):
+                return redirect('add_files')
+            return redirect(fileset_types_list[fileset_type], fileset_name = fileset_name)
+    else:
+        form = AddFilesForm()
+    return render(request, 'mainbackend/add_files.html', {'form': form})
+
+
+def add_files_MUSHRA(request, fileset_name: str) -> render:
+    if request.method == 'POST':
+        form = MUSHRATestUpload(request.POST, request.FILES)
+        if form.is_valid():
+            original_file = form.cleaned_data["original_file"]
+            original_file_label = form.cleaned_data["original_file_label"]
+            filename = f"mainbackend/static/mainbackend/MUSHRA/{original_file.name}"
+            with open(filename, 'wb+') as destination:
+                for chunk in original_file.chunks():
+                    destination.write(chunk)
+            fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA")
+            fileset.save()
+            original_file_db = MUSHRATestSets(fileset=fileset, original_file_name=original_file.name, original_file_label=original_file_label)   
+            original_file_db.save()   
+            return redirect('admin_panel')      
+    else:
+        form = MUSHRATestUpload()
+    return render(request, 'mainbackend/add_files_MUSHRA.html', {'form': form})
+
 
 def logout(request):
     request.session['admin'] = None

@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import check_password
 class ExaminedPerson(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    start_date = models.DateTimeField('Birth date')
+    birth_date = models.DateTimeField('Birth date')
     GENDERS = (
         ('M', 'Male'),
         ('F', 'Female')
@@ -72,4 +72,15 @@ class AdminToExam(models.Model):
     # Additional table for many to many Admin <-> Exam relation
     admin_id = models.ForeignKey(AdminACC, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    
+    
+class Fileset(models.Model):
+    fileset_name = models.CharField(max_length=50)
+    fileset_type = models.CharField(max_length=50)
+    
+    
+class MUSHRATestSets(models.Model):
+    fileset = models.ForeignKey(Fileset, on_delete=models.CASCADE)
+    original_file_name = models.CharField(max_length=50)
+    original_file_label = models.CharField(max_length=50)
     

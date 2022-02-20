@@ -1,0 +1,12 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Add audio files to database{% endblock %}
+{% block body %}
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Next">
+</form>
+{% endblock %}

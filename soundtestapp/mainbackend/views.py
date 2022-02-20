@@ -46,11 +46,11 @@ def exam_handle(request, exam_id, test_no):
     if not request.session.get('person'):
         return redirect('/')
     exam = Exam.objects.filter(exam_name=exam_id)[0]
-    tests = list(filter(lambda a: 'test' in a, exam.__dict__))
     if test_no > exam.test_amount:
         return redirect('end_exam') 
     test = exam.__dict__[f'test{test_no}_id_id']
     test_type = exam.__dict__[f'test{test_no}_type_id']
+    print(test_type)
     request.session['person'][f'test{test_no}'] = {
         "test": test,
         "test_type": test_type,

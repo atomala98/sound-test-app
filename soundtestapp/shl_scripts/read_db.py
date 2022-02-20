@@ -53,5 +53,17 @@ e = AdminToExam.objects.all()
 logs.write('\nAdminToExam\n')
 for i in e:
     logs.write(str(i.__dict__) + "\n")
+    
+e = Fileset.objects.all()
+
+logs.write('\nFileset\n')
+for i in e:
+    logs.write(str(i.__dict__) + "\n")
+    
+e = MUSHRATestSets.objects.all()
+
+logs.write('\nMUSHRATestSets\n')
+for i in e:
+    logs.write(str(i.__dict__) + "\n")    
 
 logs.close()
