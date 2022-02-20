@@ -8,6 +8,7 @@ from time import strftime, gmtime
 from .person import *
 from django.core.cache import cache
 from django.contrib.auth import authenticate
+import os
 
 def index(request):
     if request.session.get('person'):
@@ -68,9 +69,9 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
     test_type = TestType.objects.filter(id=test_type_id)[0]
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     if request.method == "GET":
-        filename, request.session['person'][f'test{test_no}']['choice'] = eval(f"{test.function}(randomise_delta(request.session['person'][f'test{test_no}']['delta']), request.session.get('person').get('first_name'), dt_gmt)")
+        filename_path, request.session['person'][f'test{test_no}']['choice'] = eval(f"{test.function}(randomise_delta(request.session['person'][f'test{test_no}']['delta']), request.session.get('person').get('first_name'), dt_gmt)")
         request.session.modified = True
-        filename = filename.split('/')[-1]
+        filename = filename_path.split('/')[-1]
 
     if request.method == "POST":
         button = list(request.POST.keys())[1]
@@ -78,7 +79,7 @@ def make_test(request, exam_id, test_id, test_type_id, test_no):
         if button == request.session['person'][f'test{test_no}']['choice']:
             request.session['person'][f'test{test_no}']['delta'] -= request.session['person'][f'test{test_no}']['step']
             request.session.modified = True
-            
+            print(filename)
             return redirect('make_test', exam_id=exam_id, test_id=test_id, test_type_id=test_type_id, test_no=test_no)
         else:
             return redirect('end_exam')

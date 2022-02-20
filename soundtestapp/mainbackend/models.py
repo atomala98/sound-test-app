@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.contrib.auth.hashers import check_password
+import uuid
 
 class ExaminedPerson(models.Model):
     first_name = models.CharField(max_length=30)
@@ -20,8 +21,6 @@ class Test(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=1000, null=True)
     function = models.CharField(max_length=1000, null=True)
-    first_btn = models.CharField(max_length=30, null=True)
-    second_btn = models.CharField(max_length=30, null=True)
 
     def __str__(self):
         return str(self.name)
@@ -36,6 +35,12 @@ class TestType(models.Model):
         return str(self.name)
 
 
+
+
+def create_invite_code():
+    return str(uuid.uuid4())[0:8]
+
+
 class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
     test1_id = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
@@ -46,9 +51,13 @@ class Exam(models.Model):
         ('C', 'Close')
     )
     status = models.CharField(max_length=1, choices=STATUS_TYPES)
+    exam_code = models.CharField(max_length=6, null=True, default=create_invite_code, unique=True)
+
+
 
 class Results(models.Model):
     test1_result = models.CharField(max_length=3)
+
 
 class ExaminationResult(models.Model):
     person_id = models.ForeignKey(ExaminedPerson, on_delete=models.CASCADE)
