@@ -50,7 +50,6 @@ def exam_handle(request, exam_id, test_no):
         return redirect('end_exam') 
     test = exam.__dict__[f'test{test_no}_id_id']
     test_type = exam.__dict__[f'test{test_no}_type_id']
-    print(test_type)
     request.session['person'][f'test{test_no}'] = {
         "test": test,
         "test_type": test_type,

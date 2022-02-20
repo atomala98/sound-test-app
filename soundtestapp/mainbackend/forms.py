@@ -1,5 +1,6 @@
 from django import forms
 from .models import Test, TestType
+from django.forms import ValidationError
 
 class RegisterForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=30)
@@ -27,3 +28,10 @@ class AddFilesForm(forms.Form):
 class MUSHRATestUpload(forms.Form):
     original_file = forms.FileField()
     original_file_label = forms.CharField(label="Original File Label", max_length=30)
+    
+    def clean(self):
+        original_file = self.cleaned_data['original_file']
+        if original_file.size > 10000000:
+            raise ValidationError("File too large")
+        if original_file.name.split('.')[1] != "mp3" and original_file.name.split('.')[1] != "wav":
+            raise ValidationError("Wrong file format")
