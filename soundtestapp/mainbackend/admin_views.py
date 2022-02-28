@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam, MUSHRATestSets, Fileset
+from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam, MUSHRATestSets, Fileset, ExamTest
 from django.template import loader
 from .forms import *
 from django.contrib.auth.hashers import check_password
@@ -46,13 +46,14 @@ def create_exam(request):
     if request.method == 'POST':
         form = CreateExam(request.POST)
         if form.is_valid():
-            exam_name = form.cleaned_data['exam_name']
-            test1_id = Test.objects.filter(id=request.POST['test1'][0])[0]
-            test1_type = TestType.objects.filter(id=request.POST['test1_type'][0])[0]
-            test_amount = len([x for x in [test1_id] if x is not None])
+            form_data = form.cleaned_data
+            exam_name = form_data['exam_name']
+            test_amount = 1
             if not Exam.objects.filter(exam_name=exam_name):
-                exam = Exam(exam_name=exam_name, test1_id=test1_id, test1_type=test1_type, test_amount=test_amount, status="O")
+                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="O")
                 exam.save()
+                test_1 = ExamTest(test_number=1, exam=exam, test=form_data['test1'])
+                test_1.save()
                 admin_to_exam = AdminToExam(admin_id=admin, exam_id=exam)
                 admin_to_exam.save()
                 return redirect('admin_panel')

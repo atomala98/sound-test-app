@@ -30,9 +30,15 @@ logs.write('\nExam\n')
 for i in e:
     logs.write(str(i.__dict__) + "\n")
     
-e = Results.objects.all()
+e = ExamTest.objects.all()
 
-logs.write('\nResults\n')
+logs.write('\nExamTest\n')
+for i in e:
+    logs.write(str(i.__dict__) + "\n")
+    
+e = Result.objects.all()
+
+logs.write('\nResult\n')
 for i in e:
     logs.write(str(i.__dict__) + "\n")
 

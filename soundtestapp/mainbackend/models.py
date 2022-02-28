@@ -35,16 +35,12 @@ class TestType(models.Model):
         return str(self.name)
 
 
-
-
 def create_invite_code():
     return str(uuid.uuid4())[0:8]
 
 
 class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
-    test1_id = models.ForeignKey(Test, on_delete=models.CASCADE, null=True)
-    test1_type = models.ForeignKey(TestType, on_delete=models.CASCADE, null=True)
     test_amount = models.IntegerField(null=True)
     STATUS_TYPES = (
         ('O', 'Open'),
@@ -54,20 +50,33 @@ class Exam(models.Model):
     exam_code = models.CharField(max_length=6, null=True, default=create_invite_code, unique=True)
 
 
+class ExamTest(models.Model):
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    test_number = models.DecimalField(max_digits=1, decimal_places=0, null=True)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    parameter = models.CharField(max_length=30, null=True)
 
-class Results(models.Model):
-    test1_result = models.CharField(max_length=3)
 
 
 class ExaminationResult(models.Model):
     person_id = models.ForeignKey(ExaminedPerson, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE, null=True)
-    results_id = models.ForeignKey(Results, on_delete=models.CASCADE, null=True)
     start_date = models.DateTimeField('Start date', null=True)
     end_date = models.DateTimeField('End date', null=True)
+    STATUS_TYPES = (
+        ('Y', 'Yes'),
+        ('N', 'No')
+    )
+    exam_finished = models.CharField(max_length=1, choices=STATUS_TYPES)
 
     def __str__(self):
         return str(self.person_id) + ": " + str(self.start_date)
+
+
+class Result(models.Model):
+    examination_result = models.ForeignKey(ExaminationResult, on_delete=models.CASCADE)
+    exam_test = models.ForeignKey(ExamTest, on_delete=models.CASCADE)
+    result = models.CharField(max_length=30, null=True)
 
 
 class AdminACC(models.Model):
