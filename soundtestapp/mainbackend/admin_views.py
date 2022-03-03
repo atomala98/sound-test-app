@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam, MUSHRATestSets, Fileset, ExamTest
+from .models import ExaminationResult, AdminACC, Test, Exam, AdminToExam, FileDestination, Fileset, ExamTest
 from django.template import loader
 from .forms import *
 from django.contrib.auth.hashers import check_password
@@ -93,7 +93,7 @@ def add_files_MUSHRA(request, fileset_name: str) -> render:
                     destination.write(chunk)
             fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA")
             fileset.save()
-            original_file_db = MUSHRATestSets(fileset=fileset, original_file_name=original_file.name, original_file_label=original_file_label)   
+            original_file_db = FileDestination(fileset=fileset, original_file_name=original_file.name, original_file_label=original_file_label)   
             original_file_db.save()   
             return redirect('admin_panel')      
     else:

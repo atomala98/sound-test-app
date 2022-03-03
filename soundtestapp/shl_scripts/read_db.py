@@ -66,9 +66,9 @@ logs.write('\nFileset\n')
 for i in e:
     logs.write(str(i.__dict__) + "\n")
     
-e = MUSHRATestSets.objects.all()
+e = FileDestination.objects.all()
 
-logs.write('\nMUSHRATestSets\n')
+logs.write('\nFileDestination\n')
 for i in e:
     logs.write(str(i.__dict__) + "\n")    
 

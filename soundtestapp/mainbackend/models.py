@@ -65,9 +65,10 @@ class ExaminationResult(models.Model):
     end_date = models.DateTimeField('End date', null=True)
     STATUS_TYPES = (
         ('Y', 'Yes'),
-        ('N', 'No')
+        ('N', 'No'),
+        ('C', 'Cancelled')
     )
-    exam_finished = models.CharField(max_length=1, choices=STATUS_TYPES)
+    exam_finished = models.CharField(max_length=1, choices=STATUS_TYPES, null=True)
 
     def __str__(self):
         return str(self.person_id) + ": " + str(self.start_date)
@@ -96,9 +97,8 @@ class Fileset(models.Model):
     fileset_name = models.CharField(max_length=50)
     fileset_type = models.CharField(max_length=50)
     
-    
-class MUSHRATestSets(models.Model):
+class FileDestination(models.Model):
     fileset = models.ForeignKey(Fileset, on_delete=models.CASCADE)
-    original_file_name = models.CharField(max_length=50)
-    original_file_label = models.CharField(max_length=50)
-    
+    file_name = models.CharField(max_length=150)
+    file_label = models.CharField(max_length=150)
+    file_destination = models.CharField(max_length=150)

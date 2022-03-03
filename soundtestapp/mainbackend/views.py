@@ -27,11 +27,15 @@ def welcome(request):
         return redirect('/')
     exams = Exam.objects.filter(status="O")
     if request.method == 'POST':
-        exam_id = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0][5:]
-        exam = Exam.objects.get(exam_name=exam_id)
-        request.session['person']['exam_id'] = exam_id
+        exam_name = list(filter(lambda a: 'exam:' in a, request.POST.keys()))[0][5:]
+        exam = Exam.objects.get(exam_name=exam_name)
+        person_id = request.session.get('person').get('id')
+        person = ExaminedPerson.objects.get(id=person_id)
+        request.session['person']['exam_id'] = exam.id
+        request.session['person']['test_number'] = 1
         request.session.modified = True
-        return redirect('exam_handle', exam_id=exam.id, test_no=1)
+        start_exam(request, person, exam)
+        return redirect('exam_handle')
     name = request.session.get('person').get('first_name')
     return render(request, 'mainbackend/welcome.html', {'name': name, 'exams': exams, 'user_login': request.session.get('person')})
 
@@ -43,22 +47,31 @@ def interrupt(request):
     return redirect('/')
 
 
-def exam_handle(request, exam_id, test_no):
+def exam_handle(request):
+    exam_id = request.session['person']['exam_id']
+    test_number = request.session['person']['test_number']
     if not request.session.get('person'):
         return redirect('/')
     exam = Exam.objects.get(id=exam_id)
-    if test_no > exam.test_amount:
+    if test_number > exam.test_amount:
         return redirect('end_exam')
-    print(exam, test_no)
-    test = ExamTest.objects.get(exam=exam, test_number=test_no)
-    return redirect('make_test', exam=exam.id, exam_test=test.id, test_no=test_no)
+    test = ExamTest.objects.get(exam=exam, test_number=test_number)
+    request.session['person']['test_id'] = test.id
+    request.session.modified = True
+    return redirect('make_test')
 
-def make_test(request, exam, exam_test, test_no):
+
+def make_test(request):
+    exam_id = request.session['person']['exam_id']
+    test_id = request.session['person']['test_id']
+    test_number = request.session['person']['test_number']
+    
     if not request.session.get('person'):
         return redirect('/')
         
-    exam = Exam.objects.filter(id=exam)[0]
-    test = ExamTest.objects.filter(id=exam_test)[0]
+    exam = Exam.objects.filter(id=exam_id)[0]
+    test = ExamTest.objects.filter(id=test_id)[0]
+    print(test)
     
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     if request.method == "GET":
@@ -75,13 +88,15 @@ def make_test(request, exam, exam_test, test_no):
         #     print(filename)
         #     return redirect('make_test', exam=exam.id, exam_test=test.id, test_no=test_no)
         # else:
-        return redirect('exam_handle', exam_id=exam.id, test_no=test_no + 1)
-    return render(request, 'mainbackend/frequency_difference.html', {'filename': filename, 'exam': exam, 'test_no' : test_no, 'test': test, 'user_login': request.session.get('person')})
+        request.session['person']['test_number'] += 1
+        request.session.modified = True
+        save_results(request, 5)
+        return redirect('exam_handle')
+    return render(request, 'mainbackend/frequency_difference.html', {'filename': filename, 'exam': exam, 'test_no' : test_number, 'test': test, 'user_login': request.session.get('person')})
 
 
 def end_exam(request):
     if not request.session.get('person'):
         return redirect('/')
-    save_results(request)
     request.session['person'] = None
     return render(request, 'mainbackend/end_exam.html')

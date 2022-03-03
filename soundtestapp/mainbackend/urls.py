@@ -6,6 +6,6 @@ urlpatterns = [
     path('welcome/', views.welcome, name='welcome'),
     path('end_exam/', views.end_exam, name='end_exam'),
     path('interrupt/', views.interrupt, name='interrupt'),
-    path('exam_handle/<int:exam_id>/<int:test_no>', views.exam_handle, name='exam_handle'),
-    path('make_test/<int:exam>/<int:exam_test>/<int:test_no>', views.make_test, name='make_test'),
+    path('exam_handle/', views.exam_handle, name='exam_handle'),
+    path('make_test/', views.make_test, name='make_test'),
 ] 

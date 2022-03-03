@@ -1,5 +1,6 @@
 from django.db.models import Q
-from .models import ExaminedPerson, Exam, ExaminationResult, Result
+from .models import ExaminedPerson, ExamTest, ExaminationResult, Result
+import datetime
 
 def create_person(request, form):
     request.session['person'] = {}
@@ -10,15 +11,17 @@ def create_person(request, form):
     request.session['person']['id'] = person.id
     
     
-def start_exam(request):
+def start_exam(request, person, exam):
+    
     exam_result = ExaminationResult(
-        {
-            'person_id': person_id,
-            'exam_id': exam_id,
-        }
+        person_id=person,
+        exam_id=exam,
+        start_date=datetime.datetime.now(),
+        exam_finished=False
     )
     exam_result.save()
-    
+    request.session['person']['result_id'] = exam_result.id
+
 
 def del_person(request, ExaminedPerson):
     id = request.session.get('person').get('id')
@@ -27,16 +30,16 @@ def del_person(request, ExaminedPerson):
     request.session['person'] = None
 
 
-def save_results(request, person_id, exam_id):
-    exam_result = ExaminationResult(
-        {
-            'person_id': person_id,
-            'exam_id': exam_id,
-        }
+def save_results(request, test_result):
+    exam_result_id = request.session['person']['result_id']
+    exam_result = ExaminationResult.objects.get(id=exam_result_id)
+    test_id = request.session['person']['test_id']
+    test = ExamTest.objects.get(id=test_id)
+    result = Result(
+        examination_result=exam_result,
+        exam_test=test,
+        result=test_result
     )
-    exam_result.save()
-    results = Result({
-        
-    })
-    results.save()
+    result.save()
     
+
