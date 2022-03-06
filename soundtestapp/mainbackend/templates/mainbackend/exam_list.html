@@ -1,0 +1,25 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Add audio files to database{% endblock %}
+{% block body %}
+<br>
+{% for exam in exams %}
+<h2>{{ exam.exam_name }}</h2><h3>Status: {{ exam.status }}</h3>
+{% if exam.status == "O" %}
+<form action="close_exam/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Close exam">
+</form>
+{% else %}
+<form action="open_exam/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Open exam">
+</form>
+{% endif %}
+<form action="check/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Check results">
+</form>
+<br>
+{% endfor %}
+{% endblock %}

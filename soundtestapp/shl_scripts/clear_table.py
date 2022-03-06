@@ -1,5 +1,5 @@
 from mainbackend.models import *
 
-name = "Result"
+name = "Fileset"
 
 exec(f"{name}.objects.all().delete()")

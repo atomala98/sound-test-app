@@ -57,7 +57,6 @@ class ExamTest(models.Model):
     parameter = models.CharField(max_length=30, null=True)
 
 
-
 class ExaminationResult(models.Model):
     person_id = models.ForeignKey(ExaminedPerson, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE, null=True)
@@ -89,16 +88,19 @@ class AdminACC(models.Model):
 
 class AdminToExam(models.Model):
     # Additional table for many to many Admin <-> Exam relation
-    admin_id = models.ForeignKey(AdminACC, on_delete=models.CASCADE)
-    exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    admin = models.ForeignKey(AdminACC, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
     
     
 class Fileset(models.Model):
     fileset_name = models.CharField(max_length=50)
     fileset_type = models.CharField(max_length=50)
+    amount = models.DecimalField(max_digits=2, decimal_places=0, null=True)
+    
     
 class FileDestination(models.Model):
     fileset = models.ForeignKey(Fileset, on_delete=models.CASCADE)
-    file_name = models.CharField(max_length=150)
+    filename = models.CharField(max_length=150)
     file_label = models.CharField(max_length=150)
     file_destination = models.CharField(max_length=150)
+    file_number=models.DecimalField(max_digits=2, decimal_places=0, null=True)

@@ -22,8 +22,35 @@ class CreateExam(forms.Form):
 
 class AddFilesForm(forms.Form):
     fileset_name = forms.CharField(label="Fileset name", max_length=30)
-    fileset_type = forms.ChoiceField(label='Fileset type', choices=[('MUSHRA', 'MUSHRA Fileset')])
+    fileset_type = forms.ChoiceField(label='Fileset type', choices=[
+        ('One', 'One file fileset'),
+        ('Two', 'Two file fileset'),
+        ('MUSHRA', 'MUSHRA Fileset')])
+    amount = forms.IntegerField(label='Files Amount')
     
+    
+class OneFileUploadForm(forms.Form):    
+    def __init__(self, amount, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in range(amount):
+            self.fields[f"file{i}"] = forms.FileField(label=f"File {i}:")
+            self.fields[f"file_label{i}"] = forms.CharField(label=f"File {i} Label:", max_length=30)
+    
+    
+    def clean(self):
+        file = self.cleaned_data['file']
+        if file.size > 10000000:
+            raise ValidationError("File too large")
+        if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+            raise ValidationError("Wrong file format")
+    
+    
+class TwoFilesUploadForm(forms.Form):
+    filename_A = forms.CharField(label="File A Name", max_length=30)
+    file_label_A = forms.CharField(label="File A Label", max_length=30)
+    filename_B = forms.CharField(label="File B Name", max_length=30)
+    file_label_B = forms.CharField(label="File B Label", max_length=30)
+
     
 class MUSHRATestUpload(forms.Form):
     original_file = forms.FileField()
