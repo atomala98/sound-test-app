@@ -137,7 +137,7 @@ def add_one_file(request, fileset_name: str, amount: int):
         if form.is_valid():
             fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set")
             fileset.save()
-            for i in range(amount):
+            for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
                 dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
@@ -149,12 +149,53 @@ def add_one_file(request, fileset_name: str, amount: int):
                     filename=file.name, 
                     file_label=file_label,
                     file_destination=f"mainbackend/one_file/{file.name}",
-                    file_number=i+1
+                    file_number=i
                     )   
                 file_db.save()   
             return redirect('admin_panel')     
     else:
         form = OneFileUploadForm(amount)
+    return render(request, 'mainbackend/add_files_template.html', {'form': form})
+
+
+def add_two_files(request, fileset_name: str, amount: int):
+    if request.method == 'POST':
+        form = TwoFilesUploadForm(amount, request.POST, request.FILES)
+        if form.is_valid():
+            fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set")
+            fileset.save()
+            for i in range(1, amount + 1):
+                file = form.cleaned_data[f"file_A{i}"]
+                file_label = form.cleaned_data[f"file_label_A{i}"]
+                dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
+                with open(dest, 'wb+') as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                file_A_db = FileDestination(
+                    fileset=fileset, 
+                    filename=file.name, 
+                    file_label=file_label,
+                    file_destination=f"mainbackend/one_file/{file.name}",
+                    file_number=i
+                    )   
+                file_A_db.save()   
+                file = form.cleaned_data[f"file_B{i}"]
+                file_label = form.cleaned_data[f"file_label_B{i}"]
+                dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
+                with open(dest, 'wb+') as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                file_B_db = FileDestination(
+                    fileset=fileset, 
+                    filename=file.name, 
+                    file_label=file_label,
+                    file_destination=f"mainbackend/one_file/{file.name}",
+                    file_number=i
+                    )   
+                file_B_db.save()   
+            return redirect('admin_panel')     
+    else:
+        form = TwoFilesUploadForm(amount)
     return render(request, 'mainbackend/add_files_template.html', {'form': form})
 
 

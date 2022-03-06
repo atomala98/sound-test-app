@@ -32,25 +32,43 @@ class AddFilesForm(forms.Form):
 class OneFileUploadForm(forms.Form):    
     def __init__(self, amount, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for i in range(amount):
+        self.amount = amount
+        for i in range(1, amount + 1):
             self.fields[f"file{i}"] = forms.FileField(label=f"File {i}:")
             self.fields[f"file_label{i}"] = forms.CharField(label=f"File {i} Label:", max_length=30)
     
     
     def clean(self):
-        file = self.cleaned_data['file']
-        if file.size > 10000000:
-            raise ValidationError("File too large")
-        if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
-            raise ValidationError("Wrong file format")
+         for i in range(1, self.amount + 1):
+            file = self.cleaned_data[f'file{i}']
+            if file.size > 10000000:
+                raise ValidationError("File too large")
+            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+                raise ValidationError("Wrong file format")
     
     
 class TwoFilesUploadForm(forms.Form):
-    filename_A = forms.CharField(label="File A Name", max_length=30)
-    file_label_A = forms.CharField(label="File A Label", max_length=30)
-    filename_B = forms.CharField(label="File B Name", max_length=30)
-    file_label_B = forms.CharField(label="File B Label", max_length=30)
-
+    def __init__(self, amount, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.amount = amount
+        for i in range(1, amount + 1):
+            self.fields[f"file_A{i}"] = forms.FileField(label=f"File {i}A:")
+            self.fields[f"file_label_A{i}"] = forms.CharField(label=f"File {i}A Label:", max_length=30)
+            self.fields[f"file_B{i}"] = forms.FileField(label=f"File {i}B:")
+            self.fields[f"file_label_B{i}"] = forms.CharField(label=f"File {i}B Label:", max_length=30)
+            
+    def clean(self):
+        for i in range(1, self.amount + 1):
+            file = self.cleaned_data[f'file_A{i}']
+            if file.size > 10000000:
+                raise ValidationError("File too large")
+            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+                raise ValidationError("Wrong file format")
+            file = self.cleaned_data[f'file_B{i}']
+            if file.size > 10000000:
+                raise ValidationError("File too large")
+            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+                raise ValidationError("Wrong file format")
     
 class MUSHRATestUpload(forms.Form):
     original_file = forms.FileField()
