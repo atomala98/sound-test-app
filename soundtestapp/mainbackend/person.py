@@ -12,7 +12,6 @@ def create_person(request, form):
     
     
 def start_exam(request, person, exam):
-    
     exam_result = ExaminationResult(
         person_id=person,
         exam_id=exam,

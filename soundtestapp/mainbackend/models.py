@@ -43,6 +43,7 @@ class Exam(models.Model):
     exam_name = models.CharField(max_length=30, null=True)
     test_amount = models.IntegerField(null=True)
     STATUS_TYPES = (
+        ('W', 'Waiting for parameters'),
         ('O', 'Open'),
         ('C', 'Close')
     )
@@ -77,6 +78,7 @@ class Result(models.Model):
     examination_result = models.ForeignKey(ExaminationResult, on_delete=models.CASCADE)
     exam_test = models.ForeignKey(ExamTest, on_delete=models.CASCADE)
     result = models.CharField(max_length=30, null=True)
+    result_number = models.DecimalField(max_digits=2, decimal_places=0, null=True)
 
 
 class AdminACC(models.Model):

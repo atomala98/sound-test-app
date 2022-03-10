@@ -16,9 +16,12 @@ class AdminLoginForm(forms.Form):
 
 class CreateExam(forms.Form):
     exam_name = forms.CharField(label="Exam Name", max_length=30)
-    test1 = forms.ModelChoiceField(label='Test', queryset=Test.objects.all())
-    test1_type = forms.ModelChoiceField(label='Test type', queryset=TestType.objects.all())
     
+    def __init__(self, amount, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in range(1, amount + 1):
+            self.fields[f"test_{i}"] = forms.ModelChoiceField(label=f'Test {i}', queryset=Test.objects.all())
+
 
 class AddFilesForm(forms.Form):
     fileset_name = forms.CharField(label="Fileset name", max_length=30)
@@ -70,6 +73,7 @@ class TwoFilesUploadForm(forms.Form):
             if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
                 raise ValidationError("Wrong file format")
     
+    
 class MUSHRATestUpload(forms.Form):
     original_file = forms.FileField()
     original_file_label = forms.CharField(label="Original File Label", max_length=30)
@@ -80,3 +84,7 @@ class MUSHRATestUpload(forms.Form):
             raise ValidationError("File too large")
         if original_file.name.split('.')[1] != "mp3" and original_file.name.split('.')[1] != "wav":
             raise ValidationError("Wrong file format")
+        
+        
+class FrequencyDifferenceParameters(forms.Form):
+    step = forms.FloatField()

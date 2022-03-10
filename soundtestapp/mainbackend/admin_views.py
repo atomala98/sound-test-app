@@ -41,26 +41,38 @@ def create_exam(request):
     if not request.session.get('admin'):
         return redirect('login')
     login = request.session['admin']['login']
+    test_amount = 2
     admin = AdminACC.objects.filter(login = login)[0]
-    form = CreateExam()
+    form = CreateExam(test_amount)
     if request.method == 'POST':
-        form = CreateExam(request.POST)
+        form = CreateExam(test_amount, request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
             exam_name = form_data['exam_name']
-            test_amount = 1
             if not Exam.objects.filter(exam_name=exam_name):
-                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="O")
+                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W")
                 exam.save()
-                test_1 = ExamTest(test_number=1, exam=exam, test=form_data['test1'])
-                test_1.save()
+                for i in range(1, test_amount + 1):
+                    test = ExamTest(test_number=1, exam=exam, test=form_data[f'test_{i}'])
+                    test.save()
                 admin_to_exam = AdminToExam(admin=admin, exam=exam)
                 admin_to_exam.save()
-                return redirect('admin_panel')
+                return redirect('add_parameters', exam_id=exam.id)
             else:
                 message = 'Test name already taken'
                 return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'messages': [message]})
     return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
+    
+    
+def add_parameters(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
+    login = request.session['admin']['login']
+    admin = AdminACC.objects.filter(login = login)[0]
+    exam = Exam.objects.filter(id=exam_id)
+    
+    return "asd"
+        
     
     
 def exam_list(request):
