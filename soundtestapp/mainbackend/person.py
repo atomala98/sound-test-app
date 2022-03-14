@@ -24,8 +24,9 @@ def start_exam(request, person, exam):
 
 def del_person(request, ExaminedPerson):
     id = request.session.get('person').get('id')
-    person = ExaminedPerson.objects.filter(id=id)[0]
-    person.delete()
+    person = ExaminedPerson.objects.filter(id=id).first()
+    if person:
+        person.delete()
     request.session['person'] = None
 
 

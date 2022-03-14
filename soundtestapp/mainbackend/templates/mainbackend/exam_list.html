@@ -4,16 +4,22 @@
 {% block body %}
 <br>
 {% for exam in exams %}
-<h2>{{ exam.exam_name }}</h2><h3>Status: {{ exam.status }}</h3>
+<h2>{{ exam.exam_name }}</h2>
+<h3>Status: {{ exam.status }}</h3>
 {% if exam.status == "O" %}
 <form action="close_exam/{{exam.id}}" method="post">
     {% csrf_token %}
     <input type="submit" value="Close exam">
 </form>
-{% else %}
+{% elif exam.status == "C" %}
 <form action="open_exam/{{exam.id}}" method="post">
     {% csrf_token %}
     <input type="submit" value="Open exam">
+</form>
+{% elif exam.status == "W" %}
+<form action="/internal/admin_panel/add_parameters/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Finish creating exam">
 </form>
 {% endif %}
 <form action="check/{{exam.id}}" method="post">
