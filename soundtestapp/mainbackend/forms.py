@@ -1,5 +1,5 @@
 from django import forms
-from .models import Test, TestType
+from .models import Test, TestType, Fileset
 from django.forms import ValidationError
 
 class RegisterForm(forms.Form):
@@ -87,4 +87,19 @@ class MUSHRATestUpload(forms.Form):
         
         
 class FrequencyDifferenceParameters(forms.Form):
-    step = forms.FloatField()
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ChoiceField(label='Method', choices=[
+            ('C', 'Costant Stimuli'), 
+            ('A', 'Adjustments')])
+        self.fields[f'parameter_2_{number}'] = forms.FloatField(label="Step [Hz]")
+        
+        
+class ACRParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="One File Set"))
+        self.fields[f'parameter_2_{number}'] = forms.ChoiceField(label='Method', choices=[
+            ('Normal', 'Normal'), 
+            ('Random', 'Random'),
+            ('Reversed', 'Reversed')])

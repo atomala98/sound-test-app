@@ -1,0 +1,16 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Add audio files to database{% endblock %}
+{% block body %}
+<form action="" method="post" enctype="multipart/form-data">
+{% for test in parameter_forms %}
+    {% csrf_token %}
+    <br>
+    <h2>{{ test.name }}</h2>
+    <table>
+    {{ test.form }}
+    </table>
+{% endfor %}
+    <input type="submit" value="Create exam">
+</form>
+{% endblock %}

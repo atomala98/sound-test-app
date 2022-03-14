@@ -9,4 +9,21 @@
     </table>
     <input type="submit" value="Next">
 </form>
+<script>
+    document.getElementById("id_fileset_type").addEventListener("change", setAmountBounds, false);
+    
+    function setAmountBounds(event) {
+        var amount = document.getElementById("id_amount");
+        console.log(document.getElementById("id_fileset_type").value)
+        if (document.getElementById("id_fileset_type").value == "MUSHRA") {
+            amount.value = 1;
+            amount.setAttribute("max", 1);
+            amount.setAttribute("min", 1);
+        }
+        else {
+            amount.setAttribute("max", 15);
+            amount.setAttribute("min", 1);
+        }
+    }
+</script>
 {% endblock %}

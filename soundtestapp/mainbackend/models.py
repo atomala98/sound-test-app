@@ -55,7 +55,14 @@ class ExamTest(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
     test_number = models.DecimalField(max_digits=1, decimal_places=0, null=True)
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    parameter = models.CharField(max_length=30, null=True)
+    parameter_1 = models.CharField(max_length=30, null=True)
+    parameter_2 = models.CharField(max_length=30, null=True)
+    parameter_3 = models.CharField(max_length=30, null=True)
+    parameter_4 = models.CharField(max_length=30, null=True)
+    parameter_5 = models.CharField(max_length=30, null=True)
+    
+    def __str__(self):
+        return str(self.name)
 
 
 class ExaminationResult(models.Model):
@@ -95,9 +102,12 @@ class AdminToExam(models.Model):
     
     
 class Fileset(models.Model):
-    fileset_name = models.CharField(max_length=50)
+    fileset_name = models.CharField(max_length=50, unique=True)
     fileset_type = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=2, decimal_places=0, null=True)
+    
+    def __str__(self):
+        return str(self.fileset_name)
     
     
 class FileDestination(models.Model):
@@ -105,4 +115,4 @@ class FileDestination(models.Model):
     filename = models.CharField(max_length=150)
     file_label = models.CharField(max_length=150)
     file_destination = models.CharField(max_length=150)
-    file_number=models.DecimalField(max_digits=2, decimal_places=0, null=True)
+    file_number = models.DecimalField(max_digits=2, decimal_places=0, null=True)

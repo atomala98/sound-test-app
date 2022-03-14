@@ -65,15 +65,37 @@ def create_exam(request):
     
     
 def add_parameters(request, exam_id):
+    forms_dict = {
+        "Frequency difference test": FrequencyDifferenceParameters,
+        "Absolute Category Rating": ACRParameters
+    }
     if not request.session.get('admin'):
         return redirect('login')
-    login = request.session['admin']['login']
-    admin = AdminACC.objects.filter(login = login)[0]
-    exam = Exam.objects.filter(id=exam_id)
-    
-    return "asd"
+    exam = Exam.objects.get(id=exam_id)
+    exam_tests = ExamTest.objects.filter(exam=exam)
+    parameter_forms = []
+    if request.method == 'POST':
+        for i, test in enumerate(exam_tests):
+            form = forms_dict[test.test.name](i + 1, request.POST)
+            if form.is_valid():
+                parameter_forms.append(form.cleaned_data)
+            else:
+                return redirect('add_parameters', exam_id=exam_id)
+        for i, parameters in enumerate(parameter_forms):
+            for j, (_, parameter) in enumerate(parameters.items()):
+                exam_tests[i].__dict__[f'parameter_{j+1}'] = str(parameter)
+            exam_tests[i].save()
+        exam.status = "O"
+        exam.save()
+        return redirect('admin_panel')
+    for i, test in enumerate(exam_tests):
+        parameter_forms.append({
+            'name': test.test.name,
+            'form': forms_dict[test.test.name](i + 1), 
+        })
+    print(parameter_forms)
+    return render(request, 'mainbackend/add_parameters.html', {"parameter_forms": parameter_forms})
         
-    
     
 def exam_list(request):
     if not request.session.get('admin'):
@@ -103,24 +125,6 @@ def close_exam(request, exam_id):
     exam.save()
     return redirect('exam_list')
     
-    
-def add_files(request):
-    fileset_types_list = {
-        "MUSHRA": "add_files_MUSHRA"
-    }
-    
-    if request.method == 'POST':
-        form = AddFilesForm(request.POST)
-        if form.is_valid():
-            fileset_name = form.cleaned_data["fileset_name"]
-            fileset_type = form.cleaned_data["fileset_type"]
-            if Fileset.objects.filter(fileset_name=fileset_name):
-                return redirect('add_files')
-            return redirect(fileset_types_list[fileset_type], fileset_name = fileset_name)
-    else:
-        form = AddFilesForm()
-    return render(request, 'mainbackend/add_files.html', {'form': form})
-
 
 def add_files(request):
     fileset_types_list = {

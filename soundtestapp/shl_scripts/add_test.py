@@ -1,4 +1,4 @@
-from mainbackend.models import Exam, Test, TestType
+from mainbackend.models import Exam, Test
 
 settings = {
     "name": "Frequency difference test",
@@ -8,3 +8,4 @@ settings = {
 
 t = Test(**settings)
 t.save()
+
