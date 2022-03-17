@@ -21,11 +21,20 @@ t = Test(**settings)
 t.save()
 
 
-
 settings = {
     "name": "Absolute Category Rating",
     "description": "This is Absolute Category Rating test",
-    "function": "ACT_test",
+    "function": "ACR_test",
+}
+
+t = Test(**settings)
+t.save()
+
+
+settings = {
+    "name": "Degradation Category Rating",
+    "description": "This is Degradation Category Rating test",
+    "function": "DCR_test",
 }
 
 t = Test(**settings)

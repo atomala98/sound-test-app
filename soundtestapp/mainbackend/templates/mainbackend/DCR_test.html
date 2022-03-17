@@ -1,11 +1,12 @@
 {% extends 'mainbackend/make_test.html' %}
 {% block test %}
 <h2 test-align="center">Please, complete this survey</h2>
-<audio controls>
 {% load static %}
-<source src={% static  "" %}{{ destination }} type="audio/wav">
-<p>If audio does not start, the 
-<audio> HTML element is not supported in your browser.</p>
+<audio controls src={% static  "" %}{{ destinationA }}> 
+    HTML element is not supported in your browser.
+</audio>
+<audio controls src={% static  "" %}{{ destinationB }}> 
+    HTML element is not supported in your browser.
 </audio>
 </br>
 <form action="" method="post">

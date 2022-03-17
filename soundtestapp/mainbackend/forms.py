@@ -136,3 +136,23 @@ class ACRTest(forms.Form):
             ]),
         }
         self.fields['score'] = possible_scales[scale]
+        
+        
+class DCRParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="Two File Set"))
+        self.fields[f'parameter_2_{number}'] = forms.ChoiceField(label='Recording order', choices=[
+            ('Normal', 'Normal'), 
+            ('Random', 'Random'),
+            ('Reversed', 'Reversed')])
+        
+        
+class DCRTest(forms.Form):
+    score = forms.ChoiceField(label='Rate recording degradation', choices=[
+            (5, 'Degradation is inaudible'), 
+            (4, 'Degradation is audible but not annoying'),
+            (3, 'Degradation is slightly annoying'), 
+            (2, 'Degradation is annoying'),
+            (1, 'Degradation is very annoying'),
+            ])
