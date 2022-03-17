@@ -9,6 +9,11 @@ from .person import *
 from django.core.cache import cache
 from django.contrib.auth import authenticate
 import os
+import random
+
+def randomise():
+    return random.choice([-1, 1])
+
 
 def index(request):
     if request.session.get('person'):
@@ -37,3 +42,5 @@ def acr_test(request):
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount']
         })
+    
+    
