@@ -1,15 +1,19 @@
 {% extends 'mainbackend/make_test.html' %}
 {% block test %}
-<h2 test-align="center">Which sound is higher?</h2>
+<h2 test-align="center">Please, complete this survey</h2>
 <audio controls>
 {% load static %}
-<source src={% static %}{{ direction }} type="audio/wav">
+{% static  "/" %}{{ direction }}
+<source src={% static  "" %}{{ destination }} type="audio/wav">
 <p>If audio does not start, the 
 <audio> HTML element is not supported in your browser.</p>
 </audio>
 </br>
-<form action="" id='1' name='asd' method="post">
+<form action="" method="post">
     {% csrf_token %}
-    <input type="submit" name='first' value="First one">
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Next">
 </form>
 {% endblock %}

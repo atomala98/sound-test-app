@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from .models import ExaminationResult, ExaminedPerson, Exam, Test, TestType, Result, ExamTest
+from .models import *
 from django.template import loader
 from .forms import *
 from .audio_gen import *
@@ -31,7 +31,7 @@ def welcome(request):
         exam = Exam.objects.get(exam_name=exam_name)
         person_id = request.session.get('person').get('id')
         person = ExaminedPerson.objects.get(id=person_id)
-        request.session['person']['exam_id'] = exam.id
+        request.session['person']['exam'] = exam.toJSON()
         request.session['person']['test_number'] = 1
         request.session.modified = True
         start_exam(request, person, exam)
@@ -48,7 +48,7 @@ def interrupt(request):
 
 
 def exam_handle(request):
-    exam_id = request.session['person']['exam_id']
+    exam_id = request.session['person']['exam']['exam_id']
     test_number = request.session['person']['test_number']
     if not request.session.get('person'):
         return redirect('/')
@@ -56,9 +56,10 @@ def exam_handle(request):
     if test_number > exam.test_amount:
         return redirect('end_exam')
     test = ExamTest.objects.get(exam=exam, test_number=test_number)
-    request.session['person']['test_id'] = test.id
+    request.session['person']['current_test'] = test.toJSON()
     request.session.modified = True
-    return redirect('make_test')
+    print(request.session['person']['current_test'])
+    return redirect(test.redirect())
 
 
 def make_test(request):
@@ -71,7 +72,7 @@ def make_test(request):
         
     exam = Exam.objects.filter(id=exam_id)[0]
     test = ExamTest.objects.filter(id=test_id)[0]
-    print(test)
+    print(test.redirect())
     
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     if request.method == "GET":

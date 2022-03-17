@@ -99,7 +99,40 @@ class ACRParameters(forms.Form):
     def __init__(self, number, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="One File Set"))
-        self.fields[f'parameter_2_{number}'] = forms.ChoiceField(label='Method', choices=[
+        self.fields[f'parameter_2_{number}'] = forms.ChoiceField(label='Recording order', choices=[
             ('Normal', 'Normal'), 
             ('Random', 'Random'),
             ('Reversed', 'Reversed')])
+        self.fields[f'parameter_3_{number}'] = forms.ChoiceField(label='Scale', choices=[
+            ('Listening-quality scale', 'Listening-quality scale'), 
+            ('Listening-effort scale', 'Listening-effort scale'),
+            ('Loudness-preference scale', 'Loudness-preference scale')])
+        
+        
+class ACRTest(forms.Form):
+    def __init__(self, scale, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        possible_scales = {
+            "Listening-quality scale": forms.ChoiceField(label='Rate quality of the recording', choices=[
+            (5, 'Excellent'), 
+            (4, 'Good'),
+            (3, 'Fair'), 
+            (2, 'Poor'),
+            (1, 'Bads'),
+            ]),
+            "Listening-effort scale": forms.ChoiceField(label='Rate effort required to understand meaning of recording', choices=[
+            (5, 'Complete relaxation possible; no effort required'), 
+            (4, 'Attention necessary; no appreciable effort required'),
+            (3, 'Moderate effort required'), 
+            (2, 'Considerable effort required'),
+            (1, 'No meaning understood with any feasible effort'),
+            ]),
+            "Loudness-preference scale": forms.ChoiceField(label='Rate loudness of recording', choices=[
+            (5, 'Much louder than preferred'), 
+            (4, 'Louder than preferred'),
+            (3, 'Preferred'), 
+            (2, 'Quieter than preferred'),
+            (1, 'Much quieter than preferred'),
+            ]),
+        }
+        self.fields['score'] = possible_scales[scale]

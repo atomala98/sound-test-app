@@ -53,7 +53,7 @@ def create_exam(request):
                 exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W")
                 exam.save()
                 for i in range(1, test_amount + 1):
-                    test = ExamTest(test_number=1, exam=exam, test=form_data[f'test_{i}'])
+                    test = ExamTest(test_number=i, exam=exam, test=form_data[f'test_{i}'])
                     test.save()
                 admin_to_exam = AdminToExam(admin=admin, exam=exam)
                 admin_to_exam.save()
@@ -117,6 +117,13 @@ def open_exam(request, exam_id):
     return redirect('exam_list')
 
 
+def delete_exam(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
+    exam = Exam.objects.get(id=exam_id).delete()
+    return redirect('exam_list')
+
+
 def close_exam(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
@@ -151,11 +158,12 @@ def add_one_file(request, fileset_name: str, amount: int):
     if request.method == 'POST':
         form = OneFileUploadForm(amount, request.POST, request.FILES)
         if form.is_valid():
-            fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set")
+            fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set", amount=amount)
             fileset.save()
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
+                file.name = file.name.replace(" ", "_")
                 dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():

@@ -33,12 +33,13 @@ def del_person(request, ExaminedPerson):
 def save_results(request, test_result):
     exam_result_id = request.session['person']['result_id']
     exam_result = ExaminationResult.objects.get(id=exam_result_id)
-    test_id = request.session['person']['test_id']
+    test_id = request.session['person']['current_test']['test_id']
     test = ExamTest.objects.get(id=test_id)
     result = Result(
         examination_result=exam_result,
         exam_test=test,
-        result=test_result
+        result=test_result,
+        result_number=request.session['person']['current_test']['iteration']
     )
     result.save()
     

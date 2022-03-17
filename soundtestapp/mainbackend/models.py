@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.deletion import CASCADE
 from django.contrib.auth.hashers import check_password
 import uuid
+import json
 
 class ExaminedPerson(models.Model):
     first_name = models.CharField(max_length=30)
@@ -49,7 +50,14 @@ class Exam(models.Model):
     )
     status = models.CharField(max_length=1, choices=STATUS_TYPES)
     exam_code = models.CharField(max_length=6, null=True, default=create_invite_code, unique=True)
-
+   
+    def toJSON(self):
+        return {
+            "exam_id": self.id,
+            "exam_name": self.exam_name,
+            "test_amount": self.test_amount
+        }
+   
 
 class ExamTest(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
@@ -62,7 +70,23 @@ class ExamTest(models.Model):
     parameter_5 = models.CharField(max_length=30, null=True)
     
     def __str__(self):
-        return str(self.name)
+        return str(self.exam.exam_name) + ' ' + str(self.test.name)
+    
+    def redirect(self):
+        return str(self.test.name)
+    
+    def toJSON(self):
+        json_dump = {
+            "test_id": self.id,
+            "test_number": int(self.test_number),
+            "parameter_1": self.parameter_1,
+            "parameter_2": self.parameter_2,
+            "parameter_3": self.parameter_3,
+            "parameter_4": self.parameter_4,
+            "parameter_5": self.parameter_5,
+            "iteration": 1
+        }
+        return json_dump
 
 
 class ExaminationResult(models.Model):
