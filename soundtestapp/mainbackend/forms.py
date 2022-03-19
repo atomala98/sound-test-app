@@ -146,6 +146,9 @@ class DCRParameters(forms.Form):
             ('Normal', 'Normal'), 
             ('Random', 'Random'),
             ('Reversed', 'Reversed')])
+        self.fields[f'parameter_3_{number}'] = forms.ChoiceField(label='Stimulus presentation', choices=[
+            ('Pairs', 'Pairs'), 
+            ('Repeated pairs', 'Repeated pairs')])
         
         
 class DCRTest(forms.Form):
