@@ -39,3 +39,13 @@ settings = {
 
 t = Test(**settings)
 t.save()
+
+
+settings = {
+    "name": "Comparison Category Rating",
+    "description": "This is Comparison Category Rating test",
+    "function": "CCR_test",
+}
+
+t = Test(**settings)
+t.save()

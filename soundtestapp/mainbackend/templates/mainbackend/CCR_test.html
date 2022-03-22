@@ -1,0 +1,72 @@
+{% extends 'mainbackend/make_test.html' %}
+{% block test %}
+<h2 test-align="center">Please, complete this survey</h2>
+<button type="button" class="btn btn-primary" id="play" name="play">Play</button>
+{% load static %}
+<audio src={% static  "" %}{{ destinationA }} id="audioA"> 
+    HTML element is not supported in your browser.
+</audio>
+<audio src={% static  "" %}{{ destinationB }} id="audioB"> 
+    HTML element is not supported in your browser.
+</audio>
+</br>
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Next" id="next" class="btn btn-secondary" disabled>
+</form>
+<script type="text/javascript">
+    function nextBtnHandle(event) {
+        document.getElementById('next').removeEventListener('click', buttonClicked);
+        document.getElementById('next').classList.add('btn-primary');
+        document.getElementById('next').classList.remove('btn-secondary');
+        document.getElementById('next').disabled = false;
+    }
+
+    function buttonClicked(event) {
+        document.getElementById('audioA').play();
+        var timeAInMS = document.getElementById('audioA').duration * 1000;
+        document.getElementById('play').removeEventListener('click', buttonClicked);
+        document.getElementById('play').classList.remove('btn-primary');
+        document.getElementById('play').classList.add('btn-secondary');
+        document.getElementById('play').disabled = true;
+        setTimeout(function() {
+            document.getElementById('audioB').play();
+            var timeBInMS = document.getElementById('audioA').duration * 1000;
+            setTimeout(function() {
+                nextBtnHandle();
+            }, timeBInMS + 500);
+        }, timeAInMS + 500);
+    }
+
+    function buttonClickedDouble(event) {
+        var timeAInMS = document.getElementById('audioA').duration * 1000;
+        var timeBInMS = document.getElementById('audioA').duration * 1000;
+        document.getElementById('play').removeEventListener('click', buttonClicked);
+        document.getElementById('play').classList.remove('btn-primary');
+        document.getElementById('play').classList.add('btn-secondary');
+        document.getElementById('play').disabled = true;
+        document.getElementById('audioA').play();
+        setTimeout(function() {
+            document.getElementById('audioB').play();
+            setTimeout(function() {
+                document.getElementById('audioA').play();
+                setTimeout(function() {
+                    document.getElementById('audioB').play();
+                    setTimeout(function() {
+                        nextBtnHandle();
+                    }, timeBInMS + 500);
+                }, timeAInMS + 500)
+            }, timeBInMS + 1500);
+        }, timeAInMS + 500);
+    }
+    
+    {% if presentation == "Pairs" %}
+        document.getElementById('play').addEventListener('click', buttonClicked);   
+    {% elif presentation == "Repeated pairs" %}
+        document.getElementById('play').addEventListener('click', buttonClickedDouble);
+    {% endif %}
+</script>
+{% endblock %}

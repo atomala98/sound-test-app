@@ -158,4 +158,29 @@ class DCRTest(forms.Form):
             (3, 'Degradation is slightly annoying'), 
             (2, 'Degradation is annoying'),
             (1, 'Degradation is very annoying'),
+            ])  
+
+
+class CCRParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="Two File Set"))
+        self.fields[f'parameter_2_{number}'] = forms.ChoiceField(label='Recording order', choices=[
+            ('Normal', 'Normal'), 
+            ('Random', 'Random'),
+            ('Reversed', 'Reversed')])
+        self.fields[f'parameter_3_{number}'] = forms.ChoiceField(label='Stimulus presentation', choices=[
+            ('Pairs', 'Pairs'), 
+            ('Repeated pairs', 'Repeated pairs')])
+        
+        
+class CCRTest(forms.Form):
+    score = forms.ChoiceField(label='The Quality of the Second Compared to the Quality of the First is:', choices=[
+            (3, 'Much Better'), 
+            (2, 'Better'),
+            (1, 'Slightly Better'), 
+            (0, 'About the Same'),
+            (-1, 'Slightly Worse'),
+            (-2, 'Worse'),
+            (-3, 'Much Worse'),
             ])

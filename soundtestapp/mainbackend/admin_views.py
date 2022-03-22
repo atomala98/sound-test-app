@@ -68,7 +68,8 @@ def add_parameters(request, exam_id):
     forms_dict = {
         "Frequency difference test": FrequencyDifferenceParameters,
         "Absolute Category Rating": ACRParameters,
-        "Degradation Category Rating": DCRParameters
+        "Degradation Category Rating": DCRParameters,
+        "Comparison Category Rating": CCRParameters
     }
     if not request.session.get('admin'):
         return redirect('login')
