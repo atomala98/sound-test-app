@@ -40,6 +40,33 @@
             }, timeBInMS + 500);
         }, timeAInMS + 500);
     }
-    document.getElementById('play').addEventListener('click', buttonClicked);
+
+    function buttonClickedDouble(event) {
+        var timeAInMS = document.getElementById('audioA').duration * 1000;
+        var timeBInMS = document.getElementById('audioA').duration * 1000;
+        document.getElementById('play').removeEventListener('click', buttonClicked);
+        document.getElementById('play').classList.remove('btn-primary');
+        document.getElementById('play').classList.add('btn-secondary');
+        document.getElementById('play').disabled = true;
+        document.getElementById('audioA').play();
+        setTimeout(function() {
+            document.getElementById('audioB').play();
+            setTimeout(function() {
+                document.getElementById('audioA').play();
+                setTimeout(function() {
+                    document.getElementById('audioB').play();
+                    setTimeout(function() {
+                        nextBtnHandle();
+                    }, timeBInMS + 500);
+                }, timeAInMS + 500)
+            }, timeBInMS + 1500);
+        }, timeAInMS + 500);
+    }
+    
+    {% if presentation == "Pairs" %}
+        document.getElementById('play').addEventListener('click', buttonClicked);   
+    {% elif presentation == "Repeated pairs" %}
+        document.getElementById('play').addEventListener('click', buttonClickedDouble);
+    {% endif %}
 </script>
 {% endblock %}

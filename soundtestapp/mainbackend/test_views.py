@@ -51,7 +51,6 @@ def dcr_test(request):
         return redirect("Degradation Category Rating")
     file_number = request.session['person']['current_test']['iteration']
     fileset_name = request.session['person']['current_test']['parameter_1']
-    scale = request.session['person']['current_test']['parameter_3']
     form = DCRTest()
     fileset = Fileset.objects.get(fileset_name=fileset_name)
     if file_number > fileset.amount:
@@ -65,5 +64,6 @@ def dcr_test(request):
         'destinationA': file_destination[0].file_destination,
         'destinationB': file_destination[1].file_destination,
         'test_no': request.session['person']['test_number'],
-        'test_amount': request.session['person']['exam']['test_amount']
+        'test_amount': request.session['person']['exam']['test_amount'],
+        'presentation': request.session['person']['current_test']['parameter_3']
         })
