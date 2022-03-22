@@ -26,14 +26,14 @@
     }
 
     function buttonClicked(event) {
-        document.getElementById('audioA').play();
         var timeAInMS = document.getElementById('audioA').duration * 1000;
         document.getElementById('play').removeEventListener('click', buttonClicked);
         document.getElementById('play').classList.remove('btn-primary');
         document.getElementById('play').classList.add('btn-secondary');
         document.getElementById('play').disabled = true;
+        document.getElementById(first).play();
         setTimeout(function() {
-            document.getElementById('audioB').play();
+            document.getElementById(second).play();
             var timeBInMS = document.getElementById('audioA').duration * 1000;
             setTimeout(function() {
                 nextBtnHandle();
@@ -48,13 +48,13 @@
         document.getElementById('play').classList.remove('btn-primary');
         document.getElementById('play').classList.add('btn-secondary');
         document.getElementById('play').disabled = true;
-        document.getElementById('audioA').play();
+        document.getElementById(first).play();
         setTimeout(function() {
-            document.getElementById('audioB').play();
+            document.getElementById(second).play();
             setTimeout(function() {
-                document.getElementById('audioA').play();
+                document.getElementById(first).play();
                 setTimeout(function() {
-                    document.getElementById('audioB').play();
+                    document.getElementById(second).play();
                     setTimeout(function() {
                         nextBtnHandle();
                     }, timeBInMS + 500);
@@ -62,6 +62,9 @@
             }, timeBInMS + 1500);
         }, timeAInMS + 500);
     }
+    
+    first = 'playA';
+    second = 'playB';
     
     {% if presentation == "Pairs" %}
         document.getElementById('play').addEventListener('click', buttonClicked);   
