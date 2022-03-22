@@ -1,11 +1,12 @@
 {% extends 'mainbackend/make_test.html' %}
 {% block test %}
 <h2 test-align="center">Please, complete this survey</h2>
+<button type="button" class="btn btn-primary" id="play" name="play">Play</button>
 {% load static %}
-<audio controls src={% static  "" %}{{ destinationA }}> 
+<audio src={% static  "" %}{{ destinationA }} id="audioA"> 
     HTML element is not supported in your browser.
 </audio>
-<audio controls src={% static  "" %}{{ destinationB }}> 
+<audio src={% static  "" %}{{ destinationB }} id="audioB"> 
     HTML element is not supported in your browser.
 </audio>
 </br>
@@ -14,6 +15,31 @@
     <table>
     {{ form }}
     </table>
-    <input type="submit" value="Next">
+    <input type="submit" value="Next" id="next" class="btn btn-secondary" disabled>
 </form>
+<script type="text/javascript">
+    function nextBtnHandle(event) {
+        document.getElementById('next').removeEventListener('click', buttonClicked);
+        document.getElementById('next').classList.add('btn-primary');
+        document.getElementById('next').classList.remove('btn-secondary');
+        document.getElementById('next').disabled = false;
+    }
+
+    function buttonClicked(event) {
+        document.getElementById('audioA').play();
+        var timeAInMS = document.getElementById('audioA').duration * 1000;
+        document.getElementById('play').removeEventListener('click', buttonClicked);
+        document.getElementById('play').classList.remove('btn-primary');
+        document.getElementById('play').classList.add('btn-secondary');
+        document.getElementById('play').disabled = true;
+        setTimeout(function() {
+            document.getElementById('audioB').play();
+            var timeBInMS = document.getElementById('audioA').duration * 1000;
+            setTimeout(function() {
+                nextBtnHandle();
+            }, timeBInMS + 500);
+        }, timeAInMS + 500);
+    }
+    document.getElementById('play').addEventListener('click', buttonClicked);
+</script>
 {% endblock %}

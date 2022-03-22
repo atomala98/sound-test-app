@@ -2,8 +2,8 @@
 {% block test %}
 <h2 test-align="center">Please, complete this survey</h2>
 {% load static %}
-<button type="button" class="btn btn-primary" id="play" name="play" onclick="document.getElementById('audio').play();">Play</button>
-<audio controls visibility="hidden" id="audio">
+<button type="button" class="btn btn-primary" id="play" name="play">Play</button>
+<audio id="audio">
 <source src={% static  "" %}{{ destination }} type="audio/wav" visibility="hidden">
 <p visibility="hidden">If audio does not start, the  HTML element is not supported in your browser.</p>
 </audio>
@@ -13,9 +13,26 @@
     <table>
     {{ form }}
     </table>
-    <input type="submit" value="Next">
+    <input type="submit" value="Next" id="next" class="btn btn-secondary" disabled>
 </form>
 <script type="text/javascript">
+    function nextBtnHandle(event) {
+        document.getElementById('next').removeEventListener('click', buttonClicked);
+        document.getElementById('next').classList.add('btn-primary');
+        document.getElementById('next').classList.remove('btn-secondary');
+        document.getElementById('next').disabled = false;
+    }
 
+    function buttonClicked(event) {
+        document.getElementById('audio').play();
+        var timeInMS = document.getElementById('audio').duration * 1000;
+        console.log(timeInMS);
+        document.getElementById('play').removeEventListener('click', buttonClicked);
+        document.getElementById('play').classList.remove('btn-primary');
+        document.getElementById('play').classList.add('btn-secondary');
+        document.getElementById('play').disabled = true;
+        setTimeout(nextBtnHandle, timeInMS);
+    }
+    document.getElementById('play').addEventListener('click', buttonClicked);
 </script>
 {% endblock %}
