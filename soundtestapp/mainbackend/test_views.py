@@ -69,8 +69,9 @@ def dcr_test(request):
 
     
 def ccr_test(request): 
+    request.session['person']['current_test']['order'] = randomise()
     if request.method == 'POST':
-        save_results(request, request.POST.get("score"))
+        save_results(request, request.POST.get("score") * request.session['person']['current_test']['order'])
         request.session['person']['current_test']['iteration'] += 1
         request.session.modified = True
         return redirect("Degradation Category Rating")
@@ -90,5 +91,5 @@ def ccr_test(request):
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
         'presentation': request.session['person']['current_test']['parameter_3'],
-        'order': randomise()
+        'order': request.session['person']['current_test']['order'] 
         })
