@@ -69,7 +69,8 @@ def add_parameters(request, exam_id):
         "Frequency difference test": FrequencyDifferenceParameters,
         "Absolute Category Rating": ACRParameters,
         "Degradation Category Rating": DCRParameters,
-        "Comparison Category Rating": CCRParameters
+        "Comparison Category Rating": CCRParameters,
+        "MUSHRA": MUSHRAParameters
     }
     if not request.session.get('admin'):
         return redirect('login')
@@ -227,24 +228,32 @@ def add_two_files(request, fileset_name: str, amount: int):
     return render(request, 'mainbackend/add_files_template.html', {'form': form})
 
 
-def add_files_MUSHRA(request, fileset_name: str) -> render:
+def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
     if request.method == 'POST':
-        form = MUSHRATestUpload(request.POST, request.FILES)
+        form = MUSHRATestUpload(amount, request.POST, request.FILES)
         if form.is_valid():
-            original_file = form.cleaned_data["original_file"]
-            original_file_label = form.cleaned_data["original_file_label"]
-            filename = f"mainbackend/static/mainbackend/MUSHRA/{original_file.name}"
-            with open(filename, 'wb+') as destination:
-                for chunk in original_file.chunks():
-                    destination.write(chunk)
-            fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA")
+            fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA Set", amount=amount)
             fileset.save()
-            original_file_db = FileDestination(fileset=fileset, original_file_name=original_file.name, original_file_label=original_file_label)   
-            original_file_db.save()   
-            return redirect('admin_panel')      
+            for i in range(1, amount + 1):
+                file = form.cleaned_data[f"file{i}"]
+                file_label = form.cleaned_data[f"file_label{i}"]
+                file.name = file.name.replace(" ", "_")
+                dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
+                with open(dest, 'wb+') as destination:
+                    for chunk in file.chunks():
+                        destination.write(chunk)
+                file_db = FileDestination(
+                    fileset=fileset, 
+                    filename=file.name, 
+                    file_label=file_label,
+                    file_destination=f"mainbackend/one_file/{file.name}",
+                    file_number=i
+                    )   
+                file_db.save()   
+            return redirect('admin_panel')     
     else:
-        form = MUSHRATestUpload()
-    return render(request, 'mainbackend/add_files_MUSHRA.html', {'form': form})
+        form = MUSHRATestUpload(amount)
+    return render(request, 'mainbackend/add_files_mushra.html', {'form': form})
 
 
 def logout(request):

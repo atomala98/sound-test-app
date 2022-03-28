@@ -15,5 +15,5 @@ urlpatterns = [
     path('admin_panel/exam_list/delete_exam/<int:exam_id>', admin_views.delete_exam, name='delete_exam'),
     path('admin_panel/add_one_file/<str:fileset_name>/<int:amount>', admin_views.add_one_file, name='add_one_file'),
     path('admin_panel/add_two_files/<str:fileset_name>/<int:amount>', admin_views.add_two_files, name='add_two_files'),
-    path('admin_panel/add_files_MUSHRA/<str:fileset_name>', admin_views.add_files_MUSHRA, name='add_files_MUSHRA'),
+    path('admin_panel/add_files_MUSHRA/<str:fileset_name>/<int:amount>', admin_views.add_files_MUSHRA, name='add_files_MUSHRA'),
 ]

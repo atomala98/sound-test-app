@@ -75,15 +75,21 @@ class TwoFilesUploadForm(forms.Form):
     
     
 class MUSHRATestUpload(forms.Form):
-    original_file = forms.FileField()
-    original_file_label = forms.CharField(label="Original File Label", max_length=30)
+    def __init__(self, amount, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.amount = amount
+        for i in range(1, amount + 1):
+            self.fields[f"file{i}"] = forms.FileField(label=f"File {i}:")
+            self.fields[f"file_label{i}"] = forms.CharField(label=f"File {i} Label:", max_length=30)
+    
     
     def clean(self):
-        original_file = self.cleaned_data['original_file']
-        if original_file.size > 10000000:
-            raise ValidationError("File too large")
-        if original_file.name.split('.')[1] != "mp3" and original_file.name.split('.')[1] != "wav":
-            raise ValidationError("Wrong file format")
+         for i in range(1, self.amount + 1):
+            file = self.cleaned_data[f'file{i}']
+            if file.size > 10000000:
+                raise ValidationError("File too large")
+            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+                raise ValidationError("Wrong file format")
         
         
 class FrequencyDifferenceParameters(forms.Form):
@@ -184,3 +190,17 @@ class CCRTest(forms.Form):
             (-2, 'Worse'),
             (-3, 'Much Worse'),
             ])
+
+
+class MUSHRAParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="MUSHRA Set"))
+
+
+    
+class MUSHRATest(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for i in range(1, number + 1):
+            self.fields[f'result_{i}'] = forms.IntegerField(label='Rate recording', min_value=1, max_value=100)

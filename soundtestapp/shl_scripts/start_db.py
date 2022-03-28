@@ -49,3 +49,13 @@ settings = {
 
 t = Test(**settings)
 t.save()
+
+
+settings = {
+    "name": "MUSHRA",
+    "description": "This is MUSHRA test",
+    "function": "MUSHRA",
+}
+
+t = Test(**settings)
+t.save()

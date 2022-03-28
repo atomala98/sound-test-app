@@ -16,9 +16,9 @@
         var amount = document.getElementById("id_amount");
         console.log(document.getElementById("id_fileset_type").value)
         if (document.getElementById("id_fileset_type").value == "MUSHRA") {
-            amount.value = 1;
-            amount.setAttribute("max", 1);
-            amount.setAttribute("min", 1);
+            amount.value = 6;
+            amount.setAttribute("max", 10);
+            amount.setAttribute("min", 3);
         }
         else {
             amount.setAttribute("max", 15);

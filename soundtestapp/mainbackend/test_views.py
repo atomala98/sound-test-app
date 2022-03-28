@@ -93,3 +93,22 @@ def ccr_test(request):
         'presentation': request.session['person']['current_test']['parameter_3'],
         'order': request.session['person']['current_test']['order'] 
         })
+
+
+def mushra(request): 
+    if request.method == 'POST':
+        save_results(request, request.POST.get("score") * request.session['person']['current_test']['order'])
+        request.session['person']['current_test']['iteration'] += 1
+        request.session.modified = True
+        return redirect("exam_handel")
+    fileset_name = request.session['person']['current_test']['parameter_1']
+    fileset = Fileset.objects.get(fileset_name=fileset_name)
+    form = MUSHRATest(int(fileset.amount))
+    file_destination = FileDestination.objects.filter(fileset=fileset).order_by('file_number').all()
+    return render(request, 'mainbackend/mushra.html', {
+        'form': form, 
+        'destination': file_destination,
+        'test_no': request.session['person']['test_number'],
+        'test_amount': request.session['person']['exam']['test_amount'],
+        'amount': fileset.amount
+        })

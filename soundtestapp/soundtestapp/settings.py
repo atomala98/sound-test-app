@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'mainbackend.templatetags.zip',
     'mainbackend.apps.MainbackendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
