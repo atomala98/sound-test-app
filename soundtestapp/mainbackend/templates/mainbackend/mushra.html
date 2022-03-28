@@ -28,6 +28,11 @@
     }
     
     function play(event) {
+        var audios = document.getElementsByTagName('audio');
+        for (var i = 0; i < audios.length; i++){
+            audios[i].pause();
+            audios[i].currentTime = 0
+        }
         document.getElementById(event.target.name).play()
     }
 </script>
