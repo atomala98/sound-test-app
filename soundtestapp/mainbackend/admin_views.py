@@ -3,6 +3,7 @@ from .models import *
 from django.template import loader
 from .forms import *
 from django.contrib.auth.hashers import check_password
+from operator import add
 
 def login(request):
     if request.session.get('admin'):
@@ -134,7 +135,45 @@ def close_exam(request, exam_id):
     exam.status = "C"
     exam.save()
     return redirect('exam_list')
-    
+
+
+def check_exam(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
+    exam = Exam.objects.get(id=exam_id)
+    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
+    tests = []
+    files = []
+    for test in exam_tests:
+        fileset = Fileset.objects.get(fileset_name=test.parameter_1)
+        tests.append({
+            'name': f"{test.test.name} - Fileset: {fileset.fileset_name}",
+            'length': int(fileset.amount)
+        })
+        files += FileDestination.objects.filter(fileset=fileset).values_list('file_label', flat=True)
+    exam_results = ExaminationResult.objects.filter(exam_id=exam).all().order_by('-start_date')
+    results = []
+    means = [0]*len(files)
+    finished_exams = 0
+    for result in exam_results:
+        results.append({
+            'name': str(result.person_id),
+            'start': result.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
+            'results': list(map(lambda a: int(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
+        })
+        if len(results[-1]['results']):
+            means = list(map(add, means, results[-1]['results']))
+            finished_exams += 1
+    means = list(map(lambda a: a / finished_exams, means))
+    return render(request, 'mainbackend/check_exam.html', {
+        'results': results,
+        'files': files,
+        'exam_tests': tests,
+        'tests_amount': len(exam_tests),
+        'means': means,
+        'finished_exams': finished_exams
+        })
+
 
 def add_files(request):
     fileset_types_list = {

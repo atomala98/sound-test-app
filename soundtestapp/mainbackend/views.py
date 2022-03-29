@@ -58,7 +58,6 @@ def exam_handle(request):
     test = ExamTest.objects.get(exam=exam, test_number=test_number)
     request.session['person']['current_test'] = test.toJSON()
     request.session.modified = True
-    print(request.session['person']['current_test'])
     return redirect(test.redirect())
 
 

@@ -100,7 +100,6 @@ def mushra(request):
     fileset = Fileset.objects.get(fileset_name=fileset_name)
     if request.method == 'POST':
         request.session['person']['current_test']['iteration'] = 1
-        print(request.POST)
         for i in range(1, int(fileset.amount) + 1):
             save_results(request, request.POST.get(f'result_{i}'))
             request.session['person']['current_test']['iteration'] += 1

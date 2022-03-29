@@ -1,0 +1,111 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Complete the form{% endblock %}
+{% block body %}
+<div id='table'>
+</div>
+<style>
+    table{
+        width: 80%;
+        margin: auto;
+        margin-top: 30px;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    p{
+        width: 80%;
+        margin: auto;
+        margin-top: 30px;
+    }
+    th, td{
+        padding: 10px 20px;
+        border: 1px solid #000;
+    }
+</style>
+<script type="text/javascript">
+    let table = document.createElement('table');
+    let thead = document.createElement('thead');
+    let tbody = document.createElement('tbody');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    document.getElementById('table').appendChild(table);
+
+    let tests_row = document.createElement('tr');
+
+    let heading = document.createElement('th');
+    heading.innerHTML = "Name";
+    tests_row.appendChild(heading);
+    heading = document.createElement('th');
+    heading.innerHTML = "Test date";
+    tests_row.appendChild(heading);
+
+    for (const exam_test of {{ exam_tests|safe }}) {
+        let heading = document.createElement('th');
+        heading.innerHTML = exam_test.name;
+        heading.setAttribute("colspan", exam_test.length); 
+        tests_row.appendChild(heading);
+    }
+
+    thead.appendChild(tests_row);
+
+
+    let files_row = document.createElement('tr');
+
+    let cell = document.createElement('th');
+    cell.innerHTML = "-";
+    files_row.appendChild(cell);
+    cell = document.createElement('th');
+    cell.innerHTML = "-";
+    files_row.appendChild(cell);
+
+    for (const file of {{ files|safe }}) {
+        let cell = document.createElement('th');
+        cell.innerHTML = file;
+        files_row.appendChild(cell);
+    }
+
+    thead.appendChild(files_row);
+
+
+    for (const person of {{ results|safe }}) {
+        let row = document.createElement('tr');
+        let cell = document.createElement('th');
+        cell.innerHTML = person.name;
+        row.appendChild(cell);
+        cell = document.createElement('th');
+        cell.innerHTML = person.start;
+        row.appendChild(cell);
+        for (const result of person.results) {
+            let cell = document.createElement('th');
+            cell.innerHTML = result;
+            row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+    }
+
+    let means_row = document.createElement('tr');
+
+    cell = document.createElement('th');
+    cell.innerHTML = "Means";
+    means_row.appendChild(cell);
+    cell = document.createElement('th');
+    cell.innerHTML = "-";
+    means_row.appendChild(cell);
+
+    for (const mean of {{ means|safe }}) {
+        let cell = document.createElement('th');
+        cell.innerHTML = mean;
+        means_row.appendChild(cell);
+    }
+    tbody.appendChild(means_row);
+
+</script>
+<p>There are {{ finished_exams }} finished exam{% if finished_exams != 1 %}s{% endif %}.</p>
+<p>
+<form action="delete_missing">
+<input value="Delete all unfinished exams" type="submit" id="delete" class="btn btn-primary" />
+</form>
+</p>
+{% endblock %}

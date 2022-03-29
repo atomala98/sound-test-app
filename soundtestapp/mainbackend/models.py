@@ -15,7 +15,7 @@ class ExaminedPerson(models.Model):
     gender = models.CharField(max_length=1, choices=GENDERS)
 
     def __str__(self):
-        return str(self.first_name) + " " + str(self.last_name) + "."
+        return str(self.first_name) + " " + str(self.last_name)
 
 
 class Test(models.Model):
