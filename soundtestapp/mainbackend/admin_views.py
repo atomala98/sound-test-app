@@ -71,7 +71,8 @@ def add_parameters(request, exam_id):
         "Absolute Category Rating": ACRParameters,
         "Degradation Category Rating": DCRParameters,
         "Comparison Category Rating": CCRParameters,
-        "MUSHRA": MUSHRAParameters
+        "MUSHRA": MUSHRAParameters,
+        "ABX Test": ABXParameters
     }
     if not request.session.get('admin'):
         return redirect('login')

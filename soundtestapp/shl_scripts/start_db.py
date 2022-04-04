@@ -59,3 +59,13 @@ settings = {
 
 t = Test(**settings)
 t.save()
+
+
+settings = {
+    "name": "ABX Test",
+    "description": "This is ABX test",
+    "function": "ABX_test",
+}
+
+t = Test(**settings)
+t.save()

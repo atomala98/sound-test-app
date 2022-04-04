@@ -204,3 +204,16 @@ class MUSHRATest(forms.Form):
         super().__init__(*args, **kwargs)
         for i in range(1, number + 1):
             self.fields[f'result_{i}'] = forms.IntegerField(label='Rate recording', min_value=1, max_value=100)
+            
+            
+class ABXParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="Two File Set"))
+
+
+class ABXTest(forms.Form):
+    score = forms.ChoiceField(label='Third recording is the same as:', choices=[
+            (1, 'First one'),
+            (-1, 'Second one'), 
+            ])
