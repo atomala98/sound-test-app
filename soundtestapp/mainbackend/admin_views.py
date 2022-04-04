@@ -4,6 +4,7 @@ from django.template import loader
 from .forms import *
 from django.contrib.auth.hashers import check_password
 from operator import add
+import os
 
 def login(request):
     if request.session.get('admin'):
@@ -207,7 +208,8 @@ def add_one_file(request, fileset_name: str, amount: int):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
                 file.name = file.name.replace(" ", "_")
-                dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
+                os.mkdir(f"mainbackend/static/mainbackend/one_file/{fileset_name}")
+                dest = f"mainbackend/static/mainbackend/one_file/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
@@ -215,7 +217,7 @@ def add_one_file(request, fileset_name: str, amount: int):
                     fileset=fileset, 
                     filename=file.name, 
                     file_label=file_label,
-                    file_destination=f"mainbackend/one_file/{file.name}",
+                    file_destination=f"mainbackend/one_file/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_db.save()   
@@ -235,7 +237,8 @@ def add_two_files(request, fileset_name: str, amount: int):
                 file = form.cleaned_data[f"file_A{i}"]
                 file_label = form.cleaned_data[f"file_label_A{i}"]
                 file.name = file.name.replace(" ", "_")
-                dest = f"mainbackend/static/mainbackend/two_files/{file.name}"
+                os.mkdir(f"mainbackend/static/mainbackend/two_files/{fileset_name}")
+                dest = f"mainbackend/static/mainbackend/two_files/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
@@ -243,14 +246,14 @@ def add_two_files(request, fileset_name: str, amount: int):
                     fileset=fileset, 
                     filename=file.name, 
                     file_label=file_label,
-                    file_destination=f"mainbackend/two_files/{file.name}",
+                    file_destination=f"mainbackend/two_files/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_A_db.save()   
                 file = form.cleaned_data[f"file_B{i}"]
                 file_label = form.cleaned_data[f"file_label_B{i}"]
                 file.name = file.name.replace(" ", "_")
-                dest = f"mainbackend/static/mainbackend/two_files/{file.name}"
+                dest = f"mainbackend/static/mainbackend/two_files/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
@@ -258,7 +261,7 @@ def add_two_files(request, fileset_name: str, amount: int):
                     fileset=fileset, 
                     filename=file.name, 
                     file_label=file_label,
-                    file_destination=f"mainbackend/two_files/{file.name}",
+                    file_destination=f"mainbackend/two_files/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_B_db.save()   
@@ -278,7 +281,8 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
                 file.name = file.name.replace(" ", "_")
-                dest = f"mainbackend/static/mainbackend/one_file/{file.name}"
+                os.mkdir(f"mainbackend/static/mainbackend/mushra/{fileset_name}")
+                dest = f"mainbackend/static/mainbackend/mushra/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
@@ -286,7 +290,7 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
                     fileset=fileset, 
                     filename=file.name, 
                     file_label=file_label,
-                    file_destination=f"mainbackend/one_file/{file.name}",
+                    file_destination=f"mainbackend/mushra/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_db.save()   
