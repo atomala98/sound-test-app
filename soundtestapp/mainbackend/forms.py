@@ -197,7 +197,6 @@ class MUSHRAParameters(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="MUSHRA Set"))
 
-
     
 class MUSHRATest(forms.Form):
     def __init__(self, number, *args, **kwargs):

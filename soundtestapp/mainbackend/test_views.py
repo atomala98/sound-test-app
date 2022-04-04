@@ -121,7 +121,7 @@ def mushra(request):
 def abx_test(request): 
     request.session['person']['current_test']['order'] = randomise()
     if request.method == 'POST':
-        save_results(request, request.POST.get("score"))
+        save_results(request, request.POST.get("score") * request.session['person']['current_test']['order'])
         request.session['person']['current_test']['iteration'] += 1
         request.session.modified = True
         return redirect("ABX Test")
@@ -142,3 +142,5 @@ def abx_test(request):
         'test_amount': request.session['person']['exam']['test_amount'],
         'order': request.session['person']['current_test']['order'] 
         })
+    
+    

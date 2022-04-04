@@ -129,6 +129,7 @@ class Fileset(models.Model):
     fileset_name = models.CharField(max_length=50, unique=True)
     fileset_type = models.CharField(max_length=50)
     amount = models.DecimalField(max_digits=2, decimal_places=0, null=True)
+    file_labels = models.CharField(max_length=1000, null=True)
     
     def __str__(self):
         return str(self.fileset_name)

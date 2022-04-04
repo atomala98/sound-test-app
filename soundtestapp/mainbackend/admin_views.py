@@ -152,7 +152,7 @@ def check_exam(request, exam_id):
             'name': f"{test.test.name} - Fileset: {fileset.fileset_name}",
             'length': int(fileset.amount)
         })
-        files += FileDestination.objects.filter(fileset=fileset).values_list('file_label', flat=True)
+        files += fileset.file_labels.split(', ')
     exam_results = ExaminationResult.objects.filter(exam_id=exam).all().order_by('-start_date')
     results = []
     means = [0]*len(files)
@@ -204,6 +204,7 @@ def add_one_file(request, fileset_name: str, amount: int):
         if form.is_valid():
             fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set", amount=amount)
             fileset.save()
+            file_labels = []
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
@@ -213,6 +214,7 @@ def add_one_file(request, fileset_name: str, amount: int):
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
+                file_labels.append(file_label)
                 file_db = FileDestination(
                     fileset=fileset, 
                     filename=file.name, 
@@ -221,6 +223,8 @@ def add_one_file(request, fileset_name: str, amount: int):
                     file_number=i
                     )   
                 file_db.save()   
+            fileset.file_labels = ", ".join(file_labels)
+            fileset.save()
             return redirect('admin_panel')     
     else:
         form = OneFileUploadForm(amount)
@@ -233,9 +237,10 @@ def add_two_files(request, fileset_name: str, amount: int):
         if form.is_valid():
             fileset = Fileset(fileset_name=fileset_name, fileset_type="Two File Set", amount=amount)
             fileset.save()
+            file_labels = []
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file_A{i}"]
-                file_label = form.cleaned_data[f"file_label_A{i}"]
+                file_label_A = form.cleaned_data[f"file_label_A{i}"]
                 file.name = file.name.replace(" ", "_")
                 os.mkdir(f"mainbackend/static/mainbackend/two_files/{fileset_name}")
                 dest = f"mainbackend/static/mainbackend/two_files/{fileset_name}/{file.name}"
@@ -245,13 +250,13 @@ def add_two_files(request, fileset_name: str, amount: int):
                 file_A_db = FileDestination(
                     fileset=fileset, 
                     filename=file.name, 
-                    file_label=file_label,
+                    file_label=file_label_A,
                     file_destination=f"mainbackend/two_files/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_A_db.save()   
                 file = form.cleaned_data[f"file_B{i}"]
-                file_label = form.cleaned_data[f"file_label_B{i}"]
+                file_label_B = form.cleaned_data[f"file_label_B{i}"]
                 file.name = file.name.replace(" ", "_")
                 dest = f"mainbackend/static/mainbackend/two_files/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
@@ -260,11 +265,14 @@ def add_two_files(request, fileset_name: str, amount: int):
                 file_B_db = FileDestination(
                     fileset=fileset, 
                     filename=file.name, 
-                    file_label=file_label,
+                    file_label=file_label_B,
                     file_destination=f"mainbackend/two_files/{fileset_name}/{file.name}",
                     file_number=i
                     )   
                 file_B_db.save()   
+                file_labels.append(f"{file_label_A} - {file_label_B}")
+            fileset.file_labels = ", ".join(file_labels)
+            fileset.save()
             return redirect('admin_panel')     
     else:
         form = TwoFilesUploadForm(amount)
@@ -277,6 +285,7 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
         if form.is_valid():
             fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA Set", amount=amount)
             fileset.save()
+            file_labels = []
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
@@ -286,6 +295,7 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
+                file_labels.append(file_label)
                 file_db = FileDestination(
                     fileset=fileset, 
                     filename=file.name, 
@@ -294,6 +304,8 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
                     file_number=i
                     )   
                 file_db.save()   
+            fileset.file_labels = ", ".join(file_labels)
+            fileset.save()
             return redirect('admin_panel')     
     else:
         form = MUSHRATestUpload(amount)
