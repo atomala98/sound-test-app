@@ -95,9 +95,8 @@ class ExaminationResult(models.Model):
     start_date = models.DateTimeField('Start date', null=True)
     end_date = models.DateTimeField('End date', null=True)
     STATUS_TYPES = (
-        ('Y', 'Yes'),
-        ('N', 'No'),
-        ('C', 'Cancelled')
+        ('T', 'True'),
+        ('F', 'False')
     )
     exam_finished = models.CharField(max_length=1, choices=STATUS_TYPES, null=True)
 

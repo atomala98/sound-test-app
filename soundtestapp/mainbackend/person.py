@@ -16,7 +16,7 @@ def start_exam(request, person, exam):
         person_id=person,
         exam_id=exam,
         start_date=datetime.datetime.now(),
-        exam_finished=False
+        exam_finished="F"
     )
     exam_result.save()
     request.session['person']['result_id'] = exam_result.id
@@ -44,3 +44,11 @@ def save_results(request, test_result):
     result.save()
     
 
+def end_exam_function(request):
+    exam_result_id = request.session['person']['result_id']
+    exam_result = ExaminationResult.objects.get(id=exam_result_id)
+    exam_result.end_date = datetime.datetime.now()
+    exam_result.exam_finished = "T"
+    exam_result.save()
+    request.session['person'] = None
+    request.session.modified = True

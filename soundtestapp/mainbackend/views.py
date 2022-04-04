@@ -54,6 +54,7 @@ def exam_handle(request):
         return redirect('/')
     exam = Exam.objects.get(id=exam_id)
     if test_number > exam.test_amount:
+        end_exam_function(request)
         return redirect('end_exam')
     test = ExamTest.objects.get(exam=exam, test_number=test_number)
     request.session['person']['current_test'] = test.toJSON()
@@ -98,5 +99,4 @@ def make_test(request):
 def end_exam(request):
     if not request.session.get('person'):
         return redirect('/')
-    request.session['person'] = None
     return render(request, 'mainbackend/end_exam.html')

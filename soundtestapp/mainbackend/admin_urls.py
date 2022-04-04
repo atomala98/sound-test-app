@@ -14,6 +14,7 @@ urlpatterns = [
     path('admin_panel/exam_list/close_exam/<int:exam_id>', admin_views.close_exam, name='close_exam'),
     path('admin_panel/exam_list/delete_exam/<int:exam_id>', admin_views.delete_exam, name='delete_exam'),
     path('admin_panel/exam_list/check_exam/<int:exam_id>', admin_views.check_exam, name='check_exam'),
+    path('admin_panel/exam_list/check_exam/delete_missing/<int:exam_id>', admin_views.delete_missing, name='delete_missing'),
     path('admin_panel/add_one_file/<str:fileset_name>/<int:amount>', admin_views.add_one_file, name='add_one_file'),
     path('admin_panel/add_two_files/<str:fileset_name>/<int:amount>', admin_views.add_two_files, name='add_two_files'),
     path('admin_panel/add_files_MUSHRA/<str:fileset_name>/<int:amount>', admin_views.add_files_MUSHRA, name='add_files_MUSHRA'),

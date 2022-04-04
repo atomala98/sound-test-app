@@ -5,6 +5,7 @@ from .forms import *
 from django.contrib.auth.hashers import check_password
 from operator import add
 import os
+import datetime
 
 def login(request):
     if request.session.get('admin'):
@@ -139,11 +140,11 @@ def close_exam(request, exam_id):
     return redirect('exam_list')
 
 
-def check_exam(request, exam_id):
+def check_exam(request, exam_id, page=1):
     if not request.session.get('admin'):
         return redirect('login')
     exam = Exam.objects.get(id=exam_id)
-    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
+    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')[(page-1)*20:page*20]
     tests = []
     files = []
     for test in exam_tests:
@@ -168,13 +169,28 @@ def check_exam(request, exam_id):
             finished_exams += 1
     means = list(map(lambda a: a / finished_exams, means))
     return render(request, 'mainbackend/check_exam.html', {
+        'exam_id': exam_id,
         'results': results,
         'files': files,
         'exam_tests': tests,
         'tests_amount': len(exam_tests),
         'means': means,
-        'finished_exams': finished_exams
+        'finished_exams': finished_exams,
+        'page': page
         })
+
+
+def delete_missing(request, exam_id):
+    exam = Exam.objects.get(id=exam_id)
+    exam_results = ExaminationResult.objects.filter(
+        exam_id=exam, 
+        exam_finished="F",
+        )
+    print(exam_results)
+    for exam_result in exam_results:
+        if datetime.datetime.now() - exam_result.start_date.replace(tzinfo=None) > datetime.timedelta(minutes=20):
+            exam_result.delete()
+    return redirect('check_exam', exam_id=exam_id)
 
 
 def add_files(request):
