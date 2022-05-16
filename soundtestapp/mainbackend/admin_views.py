@@ -6,6 +6,9 @@ from django.contrib.auth.hashers import check_password
 from operator import add
 import os
 import datetime
+import csv
+import mimetypes
+from django.http.response import HttpResponse
 
 def login(request):
     if request.session.get('admin'):
@@ -141,11 +144,11 @@ def close_exam(request, exam_id):
     return redirect('exam_list')
 
 
-def check_exam(request, exam_id, page=1):
+def check_exam(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
     exam = Exam.objects.get(id=exam_id)
-    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')[(page-1)*20:page*20]
+    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
     tests = []
     files = []
     for test in exam_tests:
@@ -163,7 +166,7 @@ def check_exam(request, exam_id, page=1):
         results.append({
             'name': str(result.person_id),
             'start': result.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
-            'results': list(map(lambda a: int(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
+            'results': list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
         })
         if len(results[-1]['results']):
             means = list(map(add, means, results[-1]['results']))
@@ -176,9 +179,38 @@ def check_exam(request, exam_id, page=1):
         'exam_tests': tests,
         'tests_amount': len(exam_tests),
         'means': means,
-        'finished_exams': finished_exams,
-        'page': page
+        'finished_exams': finished_exams
         })
+    
+def export_csv(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
+    exam = Exam.objects.get(id=exam_id)
+    exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
+    tests = ["Name", "Date"]
+    files = ["-", "-"]
+    for test in exam_tests:
+            fileset = Fileset.objects.get(fileset_name=test.parameter_1)
+            for i in range(int(fileset.amount)):
+                tests.append(f"{test.test.name} - Fileset: {fileset.fileset_name}")
+            files += fileset.file_labels.split(', ')
+    exam_results = ExaminationResult.objects.filter(exam_id=exam).all().order_by('-start_date')
+    results = []
+    means = [0]*len(files)
+    finished_exams = 0
+    for result in exam_results:
+        results.append([str(result.person_id)] + [result.start_date.strftime("%m/%d/%Y, %H:%M:%S")] + list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all())))
+
+    file_dir = f'mainbackend/static/output_csv/{exam_id}.csv'
+    
+    with open(file_dir, mode='w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(tests)
+        csv_writer.writerow(files)
+        for result in results:
+            csv_writer.writerow(result)  
+            
+    return render(request, 'mainbackend/export_csv.html', {"file_dir": f'output_csv/{exam_id}.csv'})
 
 
 def delete_missing(request, exam_id):

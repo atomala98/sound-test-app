@@ -1,0 +1,10 @@
+{% load static %}
+<a href={% static  "" %}{{ file_dir }} id="download"></a>
+<a href=".." id="redirect"></a>
+
+<script type="text/javascript">
+document.getElementById("download").click();
+setTimeout(function() {
+    document.getElementById("redirect").click();
+}, 500);
+</script>

@@ -2,34 +2,61 @@
 {% block title %}Index{% endblock %}
 {% block start %}Add audio files to database{% endblock %}
 {% block body %}
+<style>
+    table{
+        width: 80%;
+        margin: auto;
+        margin-top: 30px;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    input {
+        margin-right: 10px;
+    }
+</style>
 <br>
+<table colspan="5">
 {% for exam in exams %}
 <h2>{{ exam.exam_name }}</h2>
-<h3>Status: {{ exam.status }}</h3>
 {% if exam.status == "O" %}
 <form action="close_exam/{{exam.id}}" method="post">
+    <h3>Status: OPEN</h3>
     {% csrf_token %}
-    <input type="submit" value="Close exam">
+    <input type="submit" value="Close exam" class="btn btn-primary" />
+</form>
+<form action="check_exam/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Check results" class="btn btn-primary" >
+</form>
+<form action="export_csv/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Export CSV" class="btn btn-primary" >
 </form>
 {% elif exam.status == "C" %}
 <form action="open_exam/{{exam.id}}" method="post">
+    <h3>Status: CLOSED</h3>
     {% csrf_token %}
-    <input type="submit" value="Open exam">
+    <input type="submit" value="Open exam" class="btn btn-primary" >
+</form>
+<form action="check_exam/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Check results" class="btn btn-primary" >
+</form>
+<form action="export_csv/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Export CSV" class="btn btn-primary" >
 </form>
 {% elif exam.status == "W" %}
 <form action="/internal/admin_panel/add_parameters/{{exam.id}}" method="post">
+    <h3>Status: WAITING</h3>
     {% csrf_token %}
-    <input type="submit" value="Finish creating exam">
+    <input type="submit" value="Finish creating exam" class="btn btn-primary" >
 </form>
 {% endif %}
-<form action="check_exam/{{exam.id}}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Check results">
-</form>
 <form action="delete_exam/{{exam.id}}" method="post">
     {% csrf_token %}
     <input type="submit" value="Delete exam" class="btn btn-danger">
 </form>
-<br>
 {% endfor %}
+</table>
 {% endblock %}
