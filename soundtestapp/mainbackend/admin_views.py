@@ -302,11 +302,24 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
             fileset = Fileset(fileset_name=fileset_name, fileset_type="MUSHRA Set", amount=amount)
             fileset.save()
             file_labels = []
+            os.mkdir(f"mainbackend/static/mainbackend/mushra/{fileset_name}")
+            original_file = form.cleaned_data[f"original_file"]
+            dest = f"mainbackend/static/mainbackend/mushra/{fileset_name}/original"
+            with open(dest, 'wb+') as destination:
+                for chunk in original_file.chunks():
+                    destination.write(chunk)
+            file_db = FileDestination(
+                fileset=fileset, 
+                filename=original_file.name, 
+                file_label="Original file",
+                file_destination=f"mainbackend/mushra/{fileset_name}/original",
+                file_number=0
+                )   
+            file_db.save()   
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
                 file.name = file.name.replace(" ", "_")
-                os.mkdir(f"mainbackend/static/mainbackend/mushra/{fileset_name}")
                 dest = f"mainbackend/static/mainbackend/mushra/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():

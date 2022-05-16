@@ -76,13 +76,14 @@ class TwoFilesUploadForm(forms.Form):
     
     
 class MUSHRATestUpload(forms.Form):
+    original_file = forms.FileField(label=f"Original File:")
+    
     def __init__(self, amount, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.amount = amount
         for i in range(1, amount + 1):
-            self.fields[f"file{i}"] = forms.FileField(label=f"File {i}:")
-            self.fields[f"file_label{i}"] = forms.CharField(label=f"File {i} Label:", max_length=30)
-    
+            self.fields[f"file{i}"] = forms.FileField(label=f"File {i}: ")
+            self.fields[f"file_label{i}"] = forms.CharField(label=f"File {i} Label: ", max_length=30)
     
     def clean(self):
          for i in range(1, self.amount + 1):
@@ -203,7 +204,7 @@ class MUSHRATest(forms.Form):
     def __init__(self, number, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for i in range(1, number + 1):
-            self.fields[f'result_{i}'] = forms.IntegerField(label='Rate recording', min_value=1, max_value=100)
+            self.fields[f'result_{i}'] = forms.IntegerField(label='Rate recording: ', min_value=1, max_value=100)
             
             
 class ABXParameters(forms.Form):

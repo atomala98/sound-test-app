@@ -110,8 +110,11 @@ def mushra(request):
         return redirect("exam_handle")
     form = MUSHRATest(int(fileset.amount))
     file_destination = FileDestination.objects.filter(fileset=fileset).order_by('file_number').all()
+    original_file = file_destination[0]
+    file_destination = file_destination[1:]
     return render(request, 'mainbackend/mushra.html', {
         'form': form, 
+        'original': original_file,
         'destination': file_destination,
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],

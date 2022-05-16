@@ -3,6 +3,9 @@
 <h2 test-align="center">Please, complete this survey</h2>
 {% load static %}
 </br>   
+<audio src={% static  "" %}{{ original.file_destination }} id="reference" controls> 
+    HTML element is not supported in your browser.
+</audio>
 <form action="" method="post">
     {% csrf_token %}
     {% for field in form %}
@@ -16,7 +19,7 @@
     <input type="submit" value="Next" id="next" class="btn btn-primary">
 </form>
 {% for dest in destination %}
-<audio src={% static  "" %}{{ dest.file_destination }} id="audio{{ forloop.counter }}" control> 
+<audio src={% static  "" %}{{ dest.file_destination }} id="audio{{ forloop.counter }}"> 
     HTML element is not supported in your browser.
 </audio>
 {% endfor %}
