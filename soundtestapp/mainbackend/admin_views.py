@@ -74,7 +74,8 @@ def add_parameters(request, exam_id):
         "Degradation Category Rating": DCRParameters,
         "Comparison Category Rating": CCRParameters,
         "MUSHRA": MUSHRAParameters,
-        "ABX Test": ABXParameters
+        "ABX Test": ABXParameters,
+        "ABC/HR Test": ABCHRParameters
     }
     if not request.session.get('admin'):
         return redirect('login')
@@ -186,7 +187,6 @@ def delete_missing(request, exam_id):
         exam_id=exam, 
         exam_finished="F",
         )
-    print(exam_results)
     for exam_result in exam_results:
         if datetime.datetime.now() - exam_result.start_date.replace(tzinfo=None) > datetime.timedelta(minutes=20):
             exam_result.delete()

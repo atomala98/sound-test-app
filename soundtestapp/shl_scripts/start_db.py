@@ -69,3 +69,12 @@ settings = {
 
 t = Test(**settings)
 t.save()
+
+settings = {
+    "name": "ABC/HR Test",
+    "description": "This is ABC test with Hidden Reference",
+    "function": "ABCHR_test",
+}
+
+t = Test(**settings)
+t.save()

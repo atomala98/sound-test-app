@@ -1,6 +1,7 @@
 from django import forms
 from .models import Test, TestType, Fileset
 from django.forms import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class RegisterForm(forms.Form):
     first_name = forms.CharField(label='First name', max_length=30)
@@ -216,3 +217,16 @@ class ABXTest(forms.Form):
             (1, 'First one'),
             (-1, 'Second one'), 
             ])
+    
+class ABCHRParameters(forms.Form):
+    def __init__(self, number, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[f'parameter_1_{number}'] = forms.ModelChoiceField(label=f'Fileset', queryset=Fileset.objects.filter(fileset_type="Two File Set"))
+
+
+class ABCHRTest(forms.Form):
+    first_score = forms.DecimalField(label=f'Rate first recording compared to reference: ', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
+                                       MaxValueValidator(5)])
+    second_score = forms.DecimalField(label=f'Rate second recording compared to reference: ', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
+                                       MaxValueValidator(5)])
+    
