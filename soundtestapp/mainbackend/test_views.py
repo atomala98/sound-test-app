@@ -40,7 +40,8 @@ def acr_test(request):
         'form': form, 
         'destination': file_destination.file_destination,
         'test_no': request.session['person']['test_number'],
-        'test_amount': request.session['person']['exam']['test_amount']
+        'test_amount': request.session['person']['exam']['test_amount'],
+        'description': request.session['person']['test_description']
         })
     
 def dcr_test(request): 
@@ -64,7 +65,8 @@ def dcr_test(request):
         'destinationB': file_destination[1].file_destination,
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
-        'presentation': request.session['person']['current_test']['parameter_3']
+        'presentation': request.session['person']['current_test']['parameter_3'],
+        'description': request.session['person']['test_description']
         })
 
     
@@ -92,7 +94,8 @@ def ccr_test(request):
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
         'presentation': request.session['person']['current_test']['parameter_3'],
-        'order': request.session['person']['current_test']['order'] 
+        'order': request.session['person']['current_test']['order'],
+        'description': request.session['person']['test_description']
         })
 
 
@@ -118,7 +121,8 @@ def mushra(request):
         'destination': file_destination,
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
-        'amount': fileset.amount
+        'amount': fileset.amount,
+        'description': request.session['person']['test_description']
         })
     
     
@@ -145,7 +149,8 @@ def abx_test(request):
         'destinationB': file_destination[1].file_destination,
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
-        'order': request.session['person']['current_test']['order'] 
+        'order': request.session['person']['current_test']['order'],
+        'description': request.session['person']['test_description'] 
         })
     
     
