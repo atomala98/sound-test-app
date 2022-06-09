@@ -175,7 +175,8 @@ def abchr_test(request):
         'destinationB': file_destination[1].file_destination,
         'test_no': request.session['person']['test_number'],
         'test_amount': request.session['person']['exam']['test_amount'],
-        'order': request.session['person']['current_test']['order'] 
+        'order': request.session['person']['current_test']['order'],
+        'description': request.session['person']['test_description']
         })
     
     

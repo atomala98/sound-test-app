@@ -20,7 +20,7 @@ class ExaminedPerson(models.Model):
 
 class Test(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=1000, null=True)
+    description = models.CharField(max_length=10000, null=True)
     function = models.CharField(max_length=1000, null=True)
 
     def __str__(self):

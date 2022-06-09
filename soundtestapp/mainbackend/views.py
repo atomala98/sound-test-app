@@ -57,6 +57,7 @@ def exam_handle(request):
         end_exam_function(request)
         return redirect('end_exam')
     test = ExamTest.objects.get(exam=exam, test_number=test_number)
+    request.session['person']['test_description'] = Test.objects.get(id=test.test_id).description
     request.session['person']['current_test'] = test.toJSON()
     request.session.modified = True
     return redirect(test.redirect())
@@ -72,7 +73,6 @@ def make_test(request):
         
     exam = Exam.objects.filter(id=exam_id)[0]
     test = ExamTest.objects.filter(id=test_id)[0]
-    print(test.redirect())
     
     dt_gmt = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     if request.method == "GET":

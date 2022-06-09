@@ -226,8 +226,8 @@ class ABCHRParameters(forms.Form):
 
 
 class ABCHRTest(forms.Form):
-    first_score = forms.DecimalField(label=f'Rate first recording compared to reference: ', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
+    first_score = forms.DecimalField(label=f'Rate first recording compared to reference', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
                                        MaxValueValidator(5)])
-    second_score = forms.DecimalField(label=f'Rate second recording compared to reference: ', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
+    second_score = forms.DecimalField(label=f'Rate second recording compared to reference', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
                                        MaxValueValidator(5)])
     
