@@ -26,12 +26,8 @@ def login(request):
                     request.session['admin'] = {}
                     request.session['admin']['login'] = login
                     return redirect('admin_panel')
-                else:
-                    message = "Wrong password"
-                    return render(request, 'mainbackend/admin_logon.html', {'form': form, 'messages': [message]})
-            else:
-                message = f"No account with login {login}"
-                return render(request, 'mainbackend/admin_logon.html', {'form': form, 'messages': [message]})
+                render(request, 'mainbackend/admin_logon.html', {'form': form, 'errors': ["Wrong password"]})
+            return render(request, 'mainbackend/admin_logon.html', {'form': form, 'errors': [ f"No account with login {login}"]})
     return render(request, 'mainbackend/admin_logon.html', {'form': form})
 
 
@@ -56,7 +52,7 @@ def create_exam(request):
             form_data = form.cleaned_data
             exam_name = form_data['exam_name']
             if not Exam.objects.filter(exam_name=exam_name):
-                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W")
+                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W", creator_name=admin.login)
                 exam.save()
                 for i in range(1, test_amount + 1):
                     test = ExamTest(test_number=i, exam=exam, test=form_data[f'test_{i}'])
@@ -64,15 +60,14 @@ def create_exam(request):
                 admin_to_exam = AdminToExam(admin=admin, exam=exam)
                 admin_to_exam.save()
                 return redirect('add_parameters', exam_id=exam.id)
-            else:
-                message = 'Test name already taken'
-                return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'messages': [message]})
+            return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form, 'messages': ['Test name already taken']})
     return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
     
     
 def add_parameters(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     forms_dict = {
         "Frequency difference test": FrequencyDifferenceParameters,
         "Absolute Category Rating": ACRParameters,
@@ -106,27 +101,28 @@ def add_parameters(request, exam_id):
             'name': test.test.name,
             'form': forms_dict[test.test.name](i + 1), 
         })
-    return render(request, 'mainbackend/add_parameters.html', {"parameter_forms": parameter_forms})
+    return render(request, 'mainbackend/add_parameters.html', {"parameter_forms": parameter_forms, 'admin': admin})
         
     
 def join_exam(request):
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     if request.method == "POST":
         form = JoinExamForm(request.POST)
         if form.is_valid():
             exam = Exam.objects.filter(exam_code=form.cleaned_data["inv_code"])[0]
             if not exam:
-                return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["No examination with that code found!"]})
+                return render(request, 'mainbackend/join_exam.html', {'form': form, 'errors': ["No examination with that code found!"]})
             login = request.session['admin']['login']
             admin = AdminACC.objects.filter(login=login)[0]
             if AdminToExam.objects.filter(admin=admin, exam=exam):
-                return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["This exam is already assigned to you!"]})
+                return render(request, 'mainbackend/join_exam.html', {'form': form, 'errors': ["This exam is already assigned to you!"]})
             admin_to_exam = AdminToExam(admin=admin, exam=exam)
             admin_to_exam.save()
             return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["You have been added to an exam!"]})
     form = JoinExamForm()
-    return render(request, 'mainbackend/join_exam.html', {'form': form})
+    return render(request, 'mainbackend/join_exam.html', {'form': form, 'admin': admin})
 
 
 def exam_list(request):
@@ -137,7 +133,7 @@ def exam_list(request):
     exams = map(lambda a: a.exam, AdminToExam.objects.filter(admin=admin))
     if request.method == 'POST':
         print(request.POST)
-    return render(request, 'mainbackend/exam_list.html', {'exams': exams})
+    return render(request, 'mainbackend/exam_list.html', {'exams': exams, 'admin': admin})
 
 
 def open_exam(request, exam_id):
@@ -168,6 +164,7 @@ def close_exam(request, exam_id):
 def check_exam(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     exam = Exam.objects.get(id=exam_id)
     exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
     tests = []
@@ -200,7 +197,8 @@ def check_exam(request, exam_id):
         'exam_tests': tests,
         'tests_amount': len(exam_tests),
         'means': means,
-        'finished_exams': finished_exams
+        'finished_exams': finished_exams,
+        'admin': admin
         })
     
 
@@ -257,7 +255,7 @@ def add_files(request):
         "Two": "add_two_files",
         "MUSHRA": "add_files_MUSHRA"
     }
-    
+    admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = AddFilesForm(request.POST)
         if form.is_valid():
@@ -265,16 +263,17 @@ def add_files(request):
             fileset_type = form.cleaned_data["fileset_type"]
             amount = form.cleaned_data["amount"]
             if Fileset.objects.filter(fileset_name=fileset_name):
-                return redirect('add_files', {"message": "Fileset already exists!"})
+                return render(request, 'mainbackend/add_files.html', {"form": form, "errors": [f"Fileset {fileset_name} already exists!"]})
             return redirect(fileset_types_list[fileset_type], fileset_name = fileset_name, amount = amount)
     else:
         form = AddFilesForm()
-    return render(request, 'mainbackend/add_files.html', {'form': form})
+    return render(request, 'mainbackend/add_files.html', {'form': form, 'admin': admin})
 
 
 def add_one_file(request, fileset_name: str, amount: int):
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = OneFileUploadForm(amount, request.POST, request.FILES)
         if form.is_valid():
@@ -304,12 +303,13 @@ def add_one_file(request, fileset_name: str, amount: int):
             return redirect('admin_panel')     
     else:
         form = OneFileUploadForm(amount)
-    return render(request, 'mainbackend/add_files_template.html', {'form': form})
+    return render(request, 'mainbackend/add_files_template.html', {'form': form, 'admin': admin})
 
 
 def add_two_files(request, fileset_name: str, amount: int):
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = TwoFilesUploadForm(amount, request.POST, request.FILES)
         if form.is_valid():
@@ -354,12 +354,13 @@ def add_two_files(request, fileset_name: str, amount: int):
             return redirect('admin_panel')     
     else:
         form = TwoFilesUploadForm(amount)
-    return render(request, 'mainbackend/add_files_template.html', {'form': form})
+    return render(request, 'mainbackend/add_files_template.html', {'form': form, 'admin': admin})
 
 
 def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
     if not request.session.get('admin'):
         return redirect('login')
+    admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = MUSHRATestUpload(amount, request.POST, request.FILES)
         if form.is_valid():
@@ -402,7 +403,7 @@ def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
             return redirect('admin_panel')     
     else:
         form = MUSHRATestUpload(amount)
-    return render(request, 'mainbackend/add_files_mushra.html', {'form': form})
+    return render(request, 'mainbackend/add_files_mushra.html', {'form': form, 'admin': admin})
 
 
 def logout(request):

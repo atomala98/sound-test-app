@@ -53,10 +53,12 @@
     <input type="submit" value="Finish creating exam" class="btn btn-primary" >
 </form>
 {% endif %}
+{% if exam.creator_name == admin.login %}
 <form action="delete_exam/{{exam.id}}" method="post">
     {% csrf_token %}
     <input type="submit" value="Delete exam" class="btn btn-danger">
 </form>
+{% endif %}
 {% endfor %}
 </table>
 {% endblock %}
