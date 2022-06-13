@@ -17,7 +17,7 @@
 <br>
 <table colspan="5">
 {% for exam in exams %}
-<h2>{{ exam.exam_name }}</h2>
+<h2>{{ exam.exam_name }} - exam code: {{ exam.exam_code }}</h2>
 {% if exam.status == "O" %}
 <form action="close_exam/{{exam.id}}" method="post">
     <h3>Status: OPEN</h3>

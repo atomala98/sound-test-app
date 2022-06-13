@@ -231,3 +231,5 @@ class ABCHRTest(forms.Form):
     second_score = forms.DecimalField(label=f'Rate second recording compared to reference', max_digits=5, decimal_places=1, validators=[MinValueValidator(1),
                                        MaxValueValidator(5)])
     
+class JoinExamForm(forms.Form):
+    inv_code = forms.CharField(label="Invitation code", max_length=8, min_length=8)

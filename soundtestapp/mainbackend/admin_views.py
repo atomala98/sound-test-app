@@ -71,6 +71,8 @@ def create_exam(request):
     
     
 def add_parameters(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
     forms_dict = {
         "Frequency difference test": FrequencyDifferenceParameters,
         "Absolute Category Rating": ACRParameters,
@@ -104,10 +106,29 @@ def add_parameters(request, exam_id):
             'name': test.test.name,
             'form': forms_dict[test.test.name](i + 1), 
         })
-    print(parameter_forms)
     return render(request, 'mainbackend/add_parameters.html', {"parameter_forms": parameter_forms})
         
     
+def join_exam(request):
+    if not request.session.get('admin'):
+        return redirect('login')
+    if request.method == "POST":
+        form = JoinExamForm(request.POST)
+        if form.is_valid():
+            exam = Exam.objects.filter(exam_code=form.cleaned_data["inv_code"])[0]
+            if not exam:
+                return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["No examination with that code found!"]})
+            login = request.session['admin']['login']
+            admin = AdminACC.objects.filter(login=login)[0]
+            if AdminToExam.objects.filter(admin=admin, exam=exam):
+                return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["This exam is already assigned to you!"]})
+            admin_to_exam = AdminToExam(admin=admin, exam=exam)
+            admin_to_exam.save()
+            return render(request, 'mainbackend/join_exam.html', {'form': form, 'messages': ["You have been added to an exam!"]})
+    form = JoinExamForm()
+    return render(request, 'mainbackend/join_exam.html', {'form': form})
+
+
 def exam_list(request):
     if not request.session.get('admin'):
         return redirect('login')
@@ -182,6 +203,7 @@ def check_exam(request, exam_id):
         'finished_exams': finished_exams
         })
     
+
 def export_csv(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
@@ -214,6 +236,8 @@ def export_csv(request, exam_id):
 
 
 def delete_missing(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
     exam = Exam.objects.get(id=exam_id)
     exam_results = ExaminationResult.objects.filter(
         exam_id=exam, 
@@ -226,6 +250,8 @@ def delete_missing(request, exam_id):
 
 
 def add_files(request):
+    if not request.session.get('admin'):
+        return redirect('login')
     fileset_types_list = {
         "One": "add_one_file",
         "Two": "add_two_files",
@@ -247,6 +273,8 @@ def add_files(request):
 
 
 def add_one_file(request, fileset_name: str, amount: int):
+    if not request.session.get('admin'):
+        return redirect('login')
     if request.method == 'POST':
         form = OneFileUploadForm(amount, request.POST, request.FILES)
         if form.is_valid():
@@ -280,6 +308,8 @@ def add_one_file(request, fileset_name: str, amount: int):
 
 
 def add_two_files(request, fileset_name: str, amount: int):
+    if not request.session.get('admin'):
+        return redirect('login')
     if request.method == 'POST':
         form = TwoFilesUploadForm(amount, request.POST, request.FILES)
         if form.is_valid():
@@ -328,6 +358,8 @@ def add_two_files(request, fileset_name: str, amount: int):
 
 
 def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
+    if not request.session.get('admin'):
+        return redirect('login')
     if request.method == 'POST':
         form = MUSHRATestUpload(amount, request.POST, request.FILES)
         if form.is_valid():

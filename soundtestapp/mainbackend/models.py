@@ -50,7 +50,7 @@ class Exam(models.Model):
     )
     status = models.CharField(max_length=1, choices=STATUS_TYPES)
     exam_code = models.CharField(max_length=6, null=True, default=create_invite_code, unique=True)
-   
+
     def toJSON(self):
         return {
             "exam_id": self.id,

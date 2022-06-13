@@ -21,4 +21,9 @@
     {% csrf_token %}
     <input type="submit" value="Exam list">
 </form>
+<h3>Join to existing exam:</h3>
+<form action="join_exam/" method="get">
+    {% csrf_token %}
+    <input type="submit" value="Join exam">
+</form>
 {% endblock %}
