@@ -1,11 +1,17 @@
 {% extends 'mainbackend/make_test.html' %}
 {% block test %}
 <h2 test-align="center">Please, complete this survey</h2>
-{% load static %}
-</br>   
+{% load static %} 
+Reference recording:
+<br>  
+<br>
 <audio src={% static  "" %}{{ original.file_destination }} id="reference" controls> 
     HTML element is not supported in your browser.
 </audio>
+<br>
+Recordings to rate:
+<br>
+<br>
 <form action="" method="post">
     {% csrf_token %}
     {% for field in form %}

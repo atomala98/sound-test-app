@@ -1,0 +1,12 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Complete the form{% endblock %}
+{% block body %}
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Create exam">
+</form>
+{% endblock %}

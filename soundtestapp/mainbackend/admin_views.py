@@ -39,11 +39,25 @@ def admin_panel(request):
     return render(request, 'mainbackend/admin_panel.html', {'admin': admin})
 
 
-def create_exam(request):
+def create_exam_amount(request):
+    if not request.session.get('admin'):
+        return redirect('login')
+    form = CreateExamAmount()
+    login = request.session['admin']['login']
+    admin = AdminACC.objects.filter(login = login)[0]
+    if request.method == 'POST':
+        form = CreateExamAmount(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            test_amount = form_data['test_amount']
+            return redirect('create_exam', test_amount=test_amount)
+    return render(request, 'mainbackend/create_exam.html', {'admin': admin, 'form': form})
+    
+
+def create_exam(request, test_amount):
     if not request.session.get('admin'):
         return redirect('login')
     login = request.session['admin']['login']
-    test_amount = 2
     admin = AdminACC.objects.filter(login = login)[0]
     form = CreateExam(test_amount)
     if request.method == 'POST':

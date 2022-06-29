@@ -5,7 +5,7 @@
 <h2>Hello {{ admin.first_name }} {{ admin.last_name }}.</h2>
 </br>
 <h3>Create new examination:</h3>
-<form action="create_exam/" method="get">
+<form action="create_exam_amount/" method="get">
     {% csrf_token %}
     <input type="submit" value="Create exam">
 </form>

@@ -1,7 +1,6 @@
 {% extends 'mainbackend/make_test.html' %}
 {% block test %}
 <h2 test-align="center">Please, complete this survey</h2>
-<button type="button" class="btn btn-primary" id="play" name="play">Play</button>
 {% load static %}
 <h3>Reference track:</h3>
 <audio src={% static  "" %}{{ destinationA }} id="reference" controls> 
@@ -13,7 +12,9 @@
 <audio src={% static  "" %}{{ destinationB }} id="audioB"> 
     HTML element is not supported in your browser.
 </audio>
-</br>
+<br>
+<h3>Test tracks:</h3>
+<button type="button" class="btn btn-primary" id="play" name="play">Play</button>
 <form action="" method="post">
     {% csrf_token %}
     <table>

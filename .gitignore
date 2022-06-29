@@ -1,3 +1,4 @@
 *.wav
-*.txt
 *.mp3
+data
+soundtestapp/logs

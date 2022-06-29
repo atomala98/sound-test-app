@@ -15,6 +15,10 @@ class AdminLoginForm(forms.Form):
     password = forms.CharField(label='Password', max_length=30, widget=forms.PasswordInput)
     
 
+class CreateExamAmount(forms.Form):
+    test_amount = forms.IntegerField(label="Tests amount")
+
+
 class CreateExam(forms.Form):
     exam_name = forms.CharField(label="Exam Name", max_length=30)
     
