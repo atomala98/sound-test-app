@@ -1,6 +1,5 @@
 import numpy as np
 from time import strftime, gmtime
-import wavio
 from random import randint
 
 SETTINGS = {

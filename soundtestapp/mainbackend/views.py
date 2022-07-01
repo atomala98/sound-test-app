@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from .models import *
 from django.template import loader
 from .forms import *
-from .audio_gen import *
 from time import strftime, gmtime
 from .person import *
 from django.core.cache import cache

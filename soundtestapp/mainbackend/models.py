@@ -49,7 +49,7 @@ class Exam(models.Model):
         ('C', 'Close')
     )
     status = models.CharField(max_length=1, choices=STATUS_TYPES)
-    exam_code = models.CharField(max_length=6, null=True, default=create_invite_code, unique=True)
+    exam_code = models.CharField(max_length=10, null=True, default=create_invite_code, unique=True)
     creator_name = models.CharField(max_length=30, null=True)
 
     def toJSON(self):
@@ -114,7 +114,7 @@ class Result(models.Model):
 
 class AdminACC(models.Model):
     login = models.CharField(max_length=20)
-    password = models.CharField(max_length=30)
+    password = models.CharField(max_length=130)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
 
