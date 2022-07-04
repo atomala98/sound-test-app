@@ -195,15 +195,19 @@ def check_exam(request, exam_id):
     means = [0]*len(files)
     finished_exams = 0
     for result in exam_results:
-        results.append({
-            'name': str(result.person_id),
-            'start': result.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
-            'results': list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
-        })
+        if (not "" in list(map(lambda a: a.result, Result.objects.filter(examination_result=result, result__isnull=False).all()))):
+            results.append({
+                'name': str(result.person_id),
+                'start': result.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
+                'results': list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
+            })  
         if len(results[-1]['results']):
             means = list(map(add, means, results[-1]['results']))
             finished_exams += 1
-    means = list(map(lambda a: a / finished_exams, means))
+    if finished_exams:
+        means = list(map(lambda a: a / finished_exams, means))
+    else:
+        means = []
     return render(request, 'mainbackend/check_exam.html', {
         'exam_id': exam_id,
         'results': results,
@@ -252,12 +256,24 @@ def delete_missing(request, exam_id):
         return redirect('login')
     exam = Exam.objects.get(id=exam_id)
     exam_results = ExaminationResult.objects.filter(
-        exam_id=exam, 
-        exam_finished="F",
+        exam_id=exam
         )
-    for exam_result in exam_results:
-        if datetime.datetime.now() - exam_result.start_date.replace(tzinfo=None) > datetime.timedelta(minutes=20):
-            exam_result.delete()
+    for result in exam_results:
+        if datetime.datetime.now() - result.start_date.replace(tzinfo=None) > datetime.timedelta(minutes=20):
+            if "" in list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all())) or result.exam_finished == "F":
+                result.delete()
+    return redirect('check_exam', exam_id=exam_id)
+
+def delete_all_missing(request, exam_id):
+    if not request.session.get('admin'):
+        return redirect('login')
+    exam = Exam.objects.get(id=exam_id)
+    exam_results = ExaminationResult.objects.filter(
+        exam_id=exam
+        )
+    for result in exam_results:
+        if "" in list(Result.objects.filter(examination_result=result, result__isnull=False)) or result.exam_finished == "F":
+            result.delete()
     return redirect('check_exam', exam_id=exam_id)
 
 
@@ -294,11 +310,11 @@ def add_one_file(request, fileset_name: str, amount: int):
             fileset = Fileset(fileset_name=fileset_name, fileset_type="One File Set", amount=amount)
             fileset.save()
             file_labels = []
+            os.mkdir(f"mainbackend/static/mainbackend/one_file/{fileset_name}")
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file{i}"]
                 file_label = form.cleaned_data[f"file_label{i}"]
                 file.name = file.name.replace(" ", "_")
-                os.mkdir(f"mainbackend/static/mainbackend/one_file/{fileset_name}")
                 dest = f"mainbackend/static/mainbackend/one_file/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():
@@ -330,11 +346,11 @@ def add_two_files(request, fileset_name: str, amount: int):
             fileset = Fileset(fileset_name=fileset_name, fileset_type="Two File Set", amount=amount)
             fileset.save()
             file_labels = []
+            os.mkdir(f"mainbackend/static/mainbackend/two_files/{fileset_name}")
             for i in range(1, amount + 1):
                 file = form.cleaned_data[f"file_A{i}"]
                 file_label_A = form.cleaned_data[f"file_label_A{i}"]
                 file.name = file.name.replace(" ", "_")
-                os.mkdir(f"mainbackend/static/mainbackend/two_files/{fileset_name}")
                 dest = f"mainbackend/static/mainbackend/two_files/{fileset_name}/{file.name}"
                 with open(dest, 'wb+') as destination:
                     for chunk in file.chunks():

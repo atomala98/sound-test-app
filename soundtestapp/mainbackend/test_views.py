@@ -87,7 +87,7 @@ def ccr_test(request):
         request.session.modified = True
         return redirect('exam_handle')
     file_destination = FileDestination.objects.filter(fileset=fileset, file_number=file_number).order_by('id').all()
-    return render(request, 'mainbackend/dcr_test.html', {
+    return render(request, 'mainbackend/ccr_test.html', {
         'form': form, 
         'destinationA': file_destination[0].file_destination,
         'destinationB': file_destination[1].file_destination,

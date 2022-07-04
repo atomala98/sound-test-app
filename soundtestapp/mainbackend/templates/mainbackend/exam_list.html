@@ -1,6 +1,6 @@
 {% extends 'mainbackend/base.html' %}
 {% block title %}Index{% endblock %}
-{% block start %}Add audio files to database{% endblock %}
+{% block start %}Your exams{% endblock %}
 {% block body %}
 <style>
     table{
@@ -32,6 +32,10 @@
     {% csrf_token %}
     <input type="submit" value="Export CSV" class="btn btn-primary" >
 </form>
+<form action="create_report/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Create report" class="btn btn-warning" >
+</form>
 {% elif exam.status == "C" %}
 <form action="open_exam/{{exam.id}}" method="post">
     <h3>Status: CLOSED</h3>
@@ -45,6 +49,10 @@
 <form action="export_csv/{{exam.id}}" method="post">
     {% csrf_token %}
     <input type="submit" value="Export CSV" class="btn btn-primary" >
+</form>
+<form action="create_report/{{exam.id}}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Create report" class="btn btn-waring" >
 </form>
 {% elif exam.status == "W" %}
 <form action="/internal/admin_panel/add_parameters/{{exam.id}}" method="post">

@@ -105,6 +105,10 @@
 <p>There are {{ finished_exams }} finished exam{% if finished_exams != 1 %}s{% endif %}.</p>
 <p>
 <form action="delete_missing/{{ exam_id }}">
+<input value="Delete unfinished exams (20 min)" type="submit" id="delete" class="btn btn-primary" />
+</form>
+<br>
+<form action="delete_all_missing/{{ exam_id }}">
 <input value="Delete all unfinished exams" type="submit" id="delete" class="btn btn-primary" />
 </form>
 </p>

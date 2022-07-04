@@ -43,7 +43,7 @@ settings = {
     "name": "Comparison Category Rating",
     "description": """
         This is Comparison Category Rating test. Click play button, to start the recordings.
-        When recordings ends, please, compare audio quality of files in 1-5 scale.
+        When recordings ends, please, compare audio quality of files in -3 to 3 scale.
         You can only play recordings once.
         """,
     "function": "CCR_test",
