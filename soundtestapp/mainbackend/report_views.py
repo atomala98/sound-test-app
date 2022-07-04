@@ -10,6 +10,8 @@ from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPDF
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from django.shortcuts import render, redirect
+
 
 LENGTH = 21 * cm
 HEIGHT = 29.7 * cm
@@ -48,7 +50,8 @@ def start(request, exam_no):
         func = exam_tests[test - 1].test.function
         exec(f'{func}(results, canvas, exam_no, test)')
     canvas.save()
-    return HttpResponse('dupa')
+    
+    return render(request, 'mainbackend/export_report.html', {"file_dir": f'output_reports/{exam_no}.pdf'})
     
 
 def create_file(exam_no):
@@ -328,7 +331,6 @@ def MUSHRA(results, canvas, exam_no, test_no):
     exam = Exam.objects.filter(id=exam_no).first()
     exam_test = ExamTest.objects.filter(exam=exam)[test_no - 1]
     fileset_name = exam_test.parameter_1
-    presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
     for recording, result in results.items():
