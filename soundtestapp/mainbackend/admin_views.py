@@ -201,7 +201,13 @@ def check_exam(request, exam_id):
                 'name': str(result.person_id),
                 'start': result.start_date.strftime("%m/%d/%Y, %H:%M:%S"),
                 'results': list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all()))
-            })  
+            }) 
+        else:
+            return render(request, 'mainbackend/check_exam_fail.html', 
+                        {"errors": [f"Incorrect data in database! Fix data before rendering the page!"],
+                        'exam_id': exam_id
+                        }
+                    )
         if len(results[-1]['results']):
             means = list(map(add, means, results[-1]['results']))
             finished_exams += 1
@@ -261,7 +267,7 @@ def delete_missing(request, exam_id):
         )
     for result in exam_results:
         if datetime.datetime.now() - result.start_date.replace(tzinfo=None) > datetime.timedelta(minutes=20):
-            if "" in list(map(lambda a: float(a.result), Result.objects.filter(examination_result=result, result__isnull=False).all())) or result.exam_finished == "F":
+            if "" in map(lambda a: a.result, Result.objects.filter(examination_result=result, result__isnull=False)) or result.exam_finished == "F":
                 result.delete()
     return redirect('check_exam', exam_id=exam_id)
 
@@ -273,7 +279,7 @@ def delete_all_missing(request, exam_id):
         exam_id=exam
         )
     for result in exam_results:
-        if "" in list(Result.objects.filter(examination_result=result, result__isnull=False)) or result.exam_finished == "F":
+        if "" in map(lambda a: a.result, Result.objects.filter(examination_result=result, result__isnull=False)) or result.exam_finished == "F":
             result.delete()
     return redirect('check_exam', exam_id=exam_id)
 

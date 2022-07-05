@@ -35,13 +35,21 @@ def save_results(request, test_result):
     exam_result = ExaminationResult.objects.get(id=exam_result_id)
     test_id = request.session['person']['current_test']['test_id']
     test = ExamTest.objects.get(id=test_id)
-    result = Result(
-        examination_result=exam_result,
-        exam_test=test,
-        result=test_result,
-        result_number=request.session['person']['current_test']['iteration']
-    )
-    result.save()
+    existing_result = Result.objects.filter(examination_result=exam_result,
+            exam_test=test,
+            result_number=request.session['person']['current_test']['iteration'])
+    if not existing_result:
+        result = Result(
+            examination_result=exam_result,
+            exam_test=test,
+            result=test_result,
+            result_number=request.session['person']['current_test']['iteration']
+        )
+        result.save()
+    else:
+        if existing_result[0].result == '':
+            existing_result[0].result = result
+            existing_result[0].save() 
     
 
 def end_exam_function(request):

@@ -1,0 +1,14 @@
+{% extends 'mainbackend/base.html' %}
+{% block title %}Index{% endblock %}
+{% block start %}Complete the form{% endblock %}
+{% block body %}
+
+<form action="delete_missing/{{ exam_id }}">
+<input value="Delete unfinished exams (20 min)" type="submit" id="delete" class="btn btn-primary" />
+</form>
+<br>
+<form action="delete_all_missing/{{ exam_id }}">
+<input value="Delete all unfinished exams" type="submit" id="delete" class="btn btn-primary" />
+</form>
+</p>
+{% endblock %}
