@@ -11,7 +11,7 @@ from reportlab.graphics import renderPDF
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.shortcuts import render, redirect
-
+import statistics
 
 LENGTH = 21 * cm
 HEIGHT = 29.7 * cm
@@ -92,6 +92,8 @@ def create_file(exam_no):
     plt.xlabel('Wiek (lata)')
     plt.ylabel('Ilość osób')
     plt.title('Rozkład wieku osób w grupie badawczej')
+    plt.axvline(mean(persons_age), color='k', linestyle='dashed', linewidth=1)
+    plt.text(mean(persons_age), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(persons_age)))
 
     imgdata = BytesIO()
     fig.savefig(imgdata, format='svg')
@@ -101,7 +103,7 @@ def create_file(exam_no):
     renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(12, 0))
     
     canvas.setFont("Tinos", 14)
-    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {int(mean(persons_age))}")
+    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {int(mean(persons_age))} lat(a).")
 
     return canvas
 
@@ -111,10 +113,12 @@ def create_page(recording, result, canvas, fileset_type, exam, test_no, files, t
     canvas.setFont("Tinos", 24)
     canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
     canvas.setFont("Tinos", 16)
-    if fileset_type != 'Two File Set':
+    if fileset_type == 'MUSHRA Set':
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - próbka {files[recording].file_label}")
+    elif fileset_type == 'One File Set':
         canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - próbka {files[recording - 1].file_label}")
     else:
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test DCR (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording - 2].file_label} - {files[2*recording - 1].file_label}")
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording - 2].file_label} - {files[2*recording - 1].file_label}")
    
 
     fig = plt.figure(figsize=(4, 3))
@@ -122,6 +126,8 @@ def create_page(recording, result, canvas, fileset_type, exam, test_no, files, t
     plt.xlabel('Ocena')
     plt.ylabel('Ilość osób')
     plt.title('Rozkład ocen w grupie badawczej')
+    plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
+    plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
 
     imgdata = BytesIO()
     fig.savefig(imgdata, format='svg')
