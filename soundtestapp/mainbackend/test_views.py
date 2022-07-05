@@ -44,6 +44,7 @@ def acr_test(request):
         'description': request.session['person']['test_description']
         })
     
+    
 def dcr_test(request): 
     if request.method == 'POST':
         save_results(request, request.POST.get("score"))
@@ -75,7 +76,7 @@ def ccr_test(request):
         save_results(request, request.POST.get("score") * request.session['person']['current_test']['order'])
         request.session['person']['current_test']['iteration'] += 1
         request.session.modified = True
-        return redirect("Degradation Category Rating")
+        return redirect("Comparison Category Rating")
     request.session['person']['current_test']['order'] = randomise()
     request.session.modified = True
     file_number = request.session['person']['current_test']['iteration']

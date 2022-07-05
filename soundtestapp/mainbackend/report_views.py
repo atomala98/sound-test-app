@@ -106,38 +106,97 @@ def create_file(exam_no):
     return canvas
 
 
+def create_page(recording, result, canvas, fileset_type, exam, test_no, files, test_name, strings):
+    canvas.showPage()
+    canvas.setFont("Tinos", 24)
+    canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
+    canvas.setFont("Tinos", 16)
+    if fileset_type != 'Two File Set':
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - próbka {files[recording - 1].file_label}")
+    else:
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test DCR (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording - 2].file_label} - {files[2*recording - 1].file_label}")
+   
+
+    fig = plt.figure(figsize=(4, 3))
+    plt.hist(result)
+    plt.xlabel('Ocena')
+    plt.ylabel('Ilość osób')
+    plt.title('Rozkład ocen w grupie badawczej')
+
+    imgdata = BytesIO()
+    fig.savefig(imgdata, format='svg')
+    imgdata.seek(0)  # rewind the data
+
+    drawing=svg2rlg(imgdata)
+    renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
+
+    canvas.setFont("Tinos", 14)
+    for i, string in enumerate(strings):
+        canvas.drawString(2 * cm, HEIGHT - _(15, i), string)
+
+    return canvas    
+
+
 def ACR_test(results, canvas, exam_no, test_no):
+    scales = {
+        'Listening-quality scale': 'jakości odsłuchu', 
+        'Listening-effort scale': 'wysiłku słuchacza',
+        'Loudness-preference scale': 'preferowanej głośności'
+    }
+
+    marks_quality = {
+        5: ['Excellent', 'doskonałe'],
+        4: ['Good', 'dobre'],
+        3: ['Fair', 'w porządku'], 
+        2: ['Poor', 'kiepskie'],
+        1: ['Bad', 'złe']
+    }
+
+    marks_effort = {
+        5: ['Complete relaxation possible; no effort required', 'zrozumiałe bez wysiłku'],
+        4: ['Attention necessary; no appreciable effort required', 'zrozumiałe bez większego wysiłku'],
+        3: ['Moderate effort required', 'zrozumiałe przy umiarkowanym wysiłku'], 
+        2: ['Considerable effort required', 'zrozumiałe przy dużym wysiłku'],
+        1: ['No meaning understood with any feasible effort', 'niezrozumiałe niezależnie od wysiłku']
+    }
+
+    marks_loudness = {
+        5: ['Much louder than preferred', 'dużo głośniejsze niż powinno'],
+        4: ['Louder than preferred', 'głośniejsze niż powinno'],
+        3: ['Preferred', 'zrozumiałe przy umiarkowanym wysiłku'], 
+        2: ['Quieter than preferred', 'cichsze niż powinno'],
+        1: ['Much quieter than preferred', 'dużo cichsze niż powinno']
+    }
+
+    marks = {
+        'Listening-quality scale': marks_quality, 
+        'Listening-effort scale': marks_effort,
+        'Loudness-preference scale': marks_loudness
+    }
+
     exam = Exam.objects.filter(id=exam_no).first()
     exam_test = ExamTest.objects.filter(exam=exam)[test_no - 1]
     fileset_name = exam_test.parameter_1
     scale = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    marks = marks[scale]
 
     for recording, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test ACR (test {test_no}/{exam.test_amount}) - próbka {files[recording - 1].file_label}")
+        canvas = create_page(recording=recording, 
+                    result=result, 
+                    canvas=canvas, 
+                    fileset_type=fileset.fileset_type, 
+                    exam=exam, 
+                    test_no=test_no, 
+                    files=files, 
+                    test_name=exam_test.test.name, 
+                    strings=[f"W teście wykorzystano skalę {scales[scale]} ({scale}).",
+                            f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc nagranie zostało ocenione jako",
+                            f"{get_mark(marks, mean(result))[1]}, ({get_mark(marks, mean(result))[0]}).",
+                        ]
+                    )
 
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 0), f"Skala badania to {scale}.")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc nagranie można uznać za ...")
-        
     return canvas
 
 
@@ -163,32 +222,20 @@ def DCR_test(results, canvas, exam_no, test_no):
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
 
     for recording_pair, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test DCR (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording_pair - 2].file_label} - {files[2*recording_pair - 1].file_label}")
+        canvas = create_page(recording=recording_pair, 
+                    result=result, 
+                    canvas=canvas, 
+                    fileset_type=fileset.fileset_type, 
+                    exam=exam, 
+                    test_no=test_no, 
+                    files=files, 
+                    test_name=exam_test.test.name, 
+                    strings=[f"Nagrania prezentowano {pres_methods[presentation]}.",
+                            f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że",
+                            f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."
+                        ]
+                    )
 
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-        plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
-        plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 0), f"Nagrania prezentowano {pres_methods[presentation]}.")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 2), f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}).")
-        
     return canvas
 
 
@@ -214,34 +261,22 @@ def CCR_test(results, canvas, exam_no, test_no):
     presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
-    print(files)
+
     for recording_pair, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test CCR (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording_pair - 2].file_label} - {files[2*recording_pair - 1].file_label}")
+        canvas = create_page(recording=recording_pair, 
+                    result=result, 
+                    canvas=canvas, 
+                    fileset_type=fileset.fileset_type, 
+                    exam=exam, 
+                    test_no=test_no, 
+                    files=files, 
+                    test_name=exam_test.test.name, 
+                    strings=[ f"Nagrania prezentowano {pres_methods[presentation]}.",
+                            f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że jakość drugiego nagrania jest",
+                            f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}) w stosunku do orginalnego nagrania.",
+                        ]
+                    )
 
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-        plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
-        plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 0), f"Nagrania prezentowano {pres_methods[presentation]}.")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że jakość drugiego nagrania jest")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 2), f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}).")
-        
     return canvas
 
 
@@ -250,35 +285,21 @@ def ABX_test(results, canvas, exam_no, test_no):
     exam = Exam.objects.filter(id=exam_no).first()
     exam_test = ExamTest.objects.filter(exam=exam)[test_no - 1]
     fileset_name = exam_test.parameter_1
-    presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
-    print(files)
+
     for recording_pair, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test ABX (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording_pair - 2].file_label} - {files[2*recording_pair - 1].file_label}")
+        canvas = create_page(recording=recording_pair, 
+                    result=result, 
+                    canvas=canvas, 
+                    fileset_type=fileset.fileset_type, 
+                    exam=exam, 
+                    test_no=test_no, 
+                    files=files, 
+                    test_name=exam_test.test.name, 
+                    strings=[f"Różnicę między nagraniami rozpoznało {f_render(mean(result) * 100)}% badanych." ]
+                    )
 
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-        plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
-        plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Różnicę między nagraniami rozpoznało {f_render(mean(result) * 100)}% badanych.")
-        
     return canvas
 
 
@@ -294,36 +315,22 @@ def ABCHR_test(results, canvas, exam_no, test_no):
     exam = Exam.objects.filter(id=exam_no).first()
     exam_test = ExamTest.objects.filter(exam=exam)[test_no - 1]
     fileset_name = exam_test.parameter_1
-    presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
 
     for recording_pair, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test ABC/HR (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording_pair - 2].file_label} - {files[2*recording_pair - 1].file_label}")
+        canvas = create_page(recording=recording_pair, 
+                result=result, 
+                canvas=canvas, 
+                fileset_type=fileset.fileset_type, 
+                exam=exam, 
+                test_no=test_no, 
+                files=files, 
+                test_name=exam_test.test.name, 
+                strings=[f"Średni różnica między referencją, a ukrytym nagraniem testowym wynosi {f_render(mean(result))}, ",
+                        f"a więc można uznać, że różnice są {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."]
+                )
 
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-        plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
-        plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Średni różnica między referencją, a ukrytym nagraniem testowym wynosi {f_render(mean(result))}, ")
-        canvas.drawString(2 * cm, HEIGHT - _(15, 2), f"a więc można uznać, że różnice są {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}).")
-        
     return canvas
 
 
@@ -334,28 +341,15 @@ def MUSHRA(results, canvas, exam_no, test_no):
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
     for recording, result in results.items():
-        canvas.showPage()
-        canvas.setFont("Tinos", 24)
-        canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
-        canvas.setFont("Tinos", 16)
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test MUSHRA (test {test_no}/{exam.test_amount}) - plik {files[recording - 1].file_label}")
-
-        fig = plt.figure(figsize=(4, 3))
-        plt.hist(result)
-        plt.xlabel('Ocena')
-        plt.ylabel('Ilość osób')
-        plt.title('Rozkład ocen w grupie badawczej')
-        plt.axvline(mean(result), color='k', linestyle='dashed', linewidth=1)
-        plt.text(mean(result), plt.ylim()[1]*0.9, 'Średnia: {:.2f}'.format(mean(result)))
-
-        imgdata = BytesIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)  # rewind the data
-
-        drawing=svg2rlg(imgdata)
-        renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
-
-        canvas.setFont("Tinos", 14)
-        canvas.drawString(2 * cm, HEIGHT - _(15, 1), f"Średnia ocena przeprocesowanego nagrania wynosi {mean(result)}.")
+        canvas = create_page(recording=recording, 
+                result=result, 
+                canvas=canvas, 
+                fileset_type=fileset.fileset_type, 
+                exam=exam, 
+                test_no=test_no, 
+                files=files, 
+                test_name=exam_test.test.name, 
+                strings=[f"Średnia ocena przeprocesowanego nagrania wynosi {mean(result)}."]
+                )
         
     return canvas

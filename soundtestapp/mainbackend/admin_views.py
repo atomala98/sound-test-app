@@ -66,7 +66,7 @@ def create_exam(request, test_amount):
             form_data = form.cleaned_data
             exam_name = form_data['exam_name']
             if not Exam.objects.filter(exam_name=exam_name):
-                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W", creator_name=admin.login)
+                exam = Exam(exam_name=exam_name, test_amount=test_amount, status="W", creator_name=f"{admin.first_name} {admin.last_name}")
                 exam.save()
                 for i in range(1, test_amount + 1):
                     test = ExamTest(test_number=i, exam=exam, test=form_data[f'test_{i}'])
@@ -81,6 +81,7 @@ def create_exam(request, test_amount):
 def add_parameters(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     forms_dict = {
         "Frequency difference test": FrequencyDifferenceParameters,
@@ -121,15 +122,14 @@ def add_parameters(request, exam_id):
 def join_exam(request):
     if not request.session.get('admin'):
         return redirect('login')
-    admin = AdminACC.objects.filter(login = login)
+    login = request.session['admin']['login']
+    admin = AdminACC.objects.filter(login = login)[0]
     if request.method == "POST":
         form = JoinExamForm(request.POST)
         if form.is_valid():
             exam = Exam.objects.filter(exam_code=form.cleaned_data["inv_code"])[0]
             if not exam:
                 return render(request, 'mainbackend/join_exam.html', {'form': form, 'errors': ["No examination with that code found!"]})
-            login = request.session['admin']['login']
-            admin = AdminACC.objects.filter(login=login)[0]
             if AdminToExam.objects.filter(admin=admin, exam=exam):
                 return render(request, 'mainbackend/join_exam.html', {'form': form, 'errors': ["This exam is already assigned to you!"]})
             admin_to_exam = AdminToExam(admin=admin, exam=exam)
@@ -178,6 +178,7 @@ def close_exam(request, exam_id):
 def check_exam(request, exam_id):
     if not request.session.get('admin'):
         return redirect('login')
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     exam = Exam.objects.get(id=exam_id)
     exam_tests = ExamTest.objects.filter(exam=exam).all().order_by('test_number')
@@ -285,6 +286,7 @@ def add_files(request):
         "Two": "add_two_files",
         "MUSHRA": "add_files_MUSHRA"
     }
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = AddFilesForm(request.POST)
@@ -303,6 +305,7 @@ def add_files(request):
 def add_one_file(request, fileset_name: str, amount: int):
     if not request.session.get('admin'):
         return redirect('login')
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = OneFileUploadForm(amount, request.POST, request.FILES)
@@ -339,6 +342,7 @@ def add_one_file(request, fileset_name: str, amount: int):
 def add_two_files(request, fileset_name: str, amount: int):
     if not request.session.get('admin'):
         return redirect('login')
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = TwoFilesUploadForm(amount, request.POST, request.FILES)
@@ -390,6 +394,7 @@ def add_two_files(request, fileset_name: str, amount: int):
 def add_files_MUSHRA(request, fileset_name: str, amount: int) -> render:
     if not request.session.get('admin'):
         return redirect('login')
+    login = request.session['admin']['login']
     admin = AdminACC.objects.filter(login = login)
     if request.method == 'POST':
         form = MUSHRATestUpload(amount, request.POST, request.FILES)

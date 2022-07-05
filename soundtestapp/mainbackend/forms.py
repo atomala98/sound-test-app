@@ -130,7 +130,7 @@ class ACRTest(forms.Form):
             (4, 'Good'),
             (3, 'Fair'), 
             (2, 'Poor'),
-            (1, 'Bads'),
+            (1, 'Bad'),
             ]),
             "Listening-effort scale": forms.ChoiceField(label='Rate effort required to understand meaning of recording', choices=[
             (5, 'Complete relaxation possible; no effort required'), 
