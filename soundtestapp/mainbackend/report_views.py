@@ -103,7 +103,8 @@ def create_file(exam_no):
     renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(12, 0))
     
     canvas.setFont("Tinos", 14)
-    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {int(mean(persons_age))} lat(a).")
+    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {mean(persons_age)} lat(a).")
+    canvas.drawString(2 * cm, HEIGHT - _(13.5, 1), f"Mediana wieku osób uczestniczących w badaniu wynosi {statistics.median(persons_age)} lat(a).")
 
     return canvas
 
