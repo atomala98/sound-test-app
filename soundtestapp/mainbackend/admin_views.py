@@ -212,7 +212,7 @@ def check_exam(request, exam_id):
             means = list(map(add, means, results[-1]['results']))
             finished_exams += 1
     if finished_exams:
-        means = list(map(lambda a: a / finished_exams, means))
+        means = list(map(lambda a: round(a / finished_exams, 2), means))
     else:
         means = []
     return render(request, 'mainbackend/check_exam.html', {
