@@ -51,7 +51,7 @@ class OneFileUploadForm(forms.Form):
             file = self.cleaned_data[f'file{i}']
             if file.size > 10000000:
                 raise ValidationError("File too large")
-            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+            if file.name.split('.')[1] not in ("mp3", "wav", "ogg"):
                 raise ValidationError("Wrong file format")
     
     
@@ -70,12 +70,12 @@ class TwoFilesUploadForm(forms.Form):
             file = self.cleaned_data[f'file_A{i}']
             if file.size > 10000000:
                 raise ValidationError("File too large")
-            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+            if file.name.split('.')[1] not in ("mp3", "wav", "ogg"):
                 raise ValidationError("Wrong file format")
             file = self.cleaned_data[f'file_B{i}']
             if file.size > 10000000:
                 raise ValidationError("File too large")
-            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+            if file.name.split('.')[1] not in ("mp3", "wav", "ogg"):
                 raise ValidationError("Wrong file format")
     
     
@@ -94,7 +94,7 @@ class MUSHRATestUpload(forms.Form):
             file = self.cleaned_data[f'file{i}']
             if file.size > 10000000:
                 raise ValidationError("File too large")
-            if file.name.split('.')[1] != "mp3" and file.name.split('.')[1] != "wav":
+            if file.name.split('.')[1] not in ("mp3", "wav", "ogg"):
                 raise ValidationError("Wrong file format")
         
         
