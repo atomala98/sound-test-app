@@ -73,7 +73,7 @@ def dcr_test(request):
     
 def ccr_test(request): 
     if request.method == 'POST':
-        save_results(request, request.POST.get("score") * request.session['person']['current_test']['order'])
+        save_results(request, str(int(request.POST.get("score")) * request.session['person']['current_test']['order']))
         request.session['person']['current_test']['iteration'] += 1
         request.session.modified = True
         return redirect("Comparison Category Rating")
@@ -104,14 +104,16 @@ def mushra(request):
     fileset_name = request.session['person']['current_test']['parameter_1']
     fileset = Fileset.objects.get(fileset_name=fileset_name)
     if request.method == 'POST':
-        request.session['person']['current_test']['iteration'] = 1
-        for i in range(1, int(fileset.amount) + 1):
-            save_results(request, request.POST.get(f'result_{i}'))
-            request.session['person']['current_test']['iteration'] += 1
+        form = MUSHRATest(int(fileset.amount), request.POST)
+        if form.is_valid():
+            request.session['person']['current_test']['iteration'] = 1
+            for i in range(1, int(fileset.amount) + 1):
+                save_results(request, request.POST.get(f'result_{i}'))
+                request.session['person']['current_test']['iteration'] += 1
+                request.session.modified = True
+            request.session['person']['test_number'] += 1
             request.session.modified = True
-        request.session['person']['test_number'] += 1
-        request.session.modified = True
-        return redirect("exam_handle")
+            return redirect("exam_handle")
     form = MUSHRATest(int(fileset.amount))
     file_destination = FileDestination.objects.filter(fileset=fileset).order_by('file_number').all()
     original_file = file_destination[0]
@@ -156,19 +158,21 @@ def abx_test(request):
     
     
 def abchr_test(request): 
+    form = ABCHRTest()
     if request.method == 'POST':
-        if request.session['person']['current_test']['order'] == 1:
-            save_results(request, request.POST.get("first_score"))
-        if request.session['person']['current_test']['order'] == -1:
-            save_results(request, request.POST.get("second_score"))
-        request.session['person']['current_test']['iteration'] += 1
-        request.session.modified = True
-        return redirect("ABC/HR Test")
+        form = ABCHRTest(request.POST)
+        if form.is_valid():
+            if request.session['person']['current_test']['order'] == 1:
+                save_results(request, request.POST.get("first_score"))
+            if request.session['person']['current_test']['order'] == -1:
+                save_results(request, request.POST.get("second_score"))
+            request.session['person']['current_test']['iteration'] += 1
+            request.session.modified = True
+            return redirect("ABC/HR Test")
     request.session['person']['current_test']['order'] = randomise()
     request.session.modified = True
     file_number = request.session['person']['current_test']['iteration']
     fileset_name = request.session['person']['current_test']['parameter_1']
-    form = ABCHRTest()
     fileset = Fileset.objects.get(fileset_name=fileset_name)
     if file_number > fileset.amount:
         request.session['person']['test_number'] += 1

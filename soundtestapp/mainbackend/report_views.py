@@ -12,6 +12,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from django.shortcuts import render, redirect
 import statistics
+from .timer_func import timer
+from reportlab.platypus import Table
+from reportlab.lib import colors
+
 
 LENGTH = 21 * cm
 HEIGHT = 29.7 * cm
@@ -31,6 +35,7 @@ def get_mark(d, val):
         if key <= val:
             return d[key]
 
+@timer
 def start(request, exam_no):
     exam = Exam.objects.filter(id=exam_no).first()
     exam_results = ExaminationResult.objects.filter(exam_id=exam)
@@ -114,16 +119,26 @@ def create_page(recording, result, canvas, fileset_type, exam, test_no, files, t
     canvas.setFont("Tinos", 24)
     canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
     canvas.setFont("Tinos", 16)
+    canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount})")
     if fileset_type == 'MUSHRA Set':
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - próbka {files[recording].file_label}")
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 1), f"Próbka {files[recording].file_label}")
     elif fileset_type == 'One File Set':
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - próbka {files[recording - 1].file_label}")
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 1), f"Próbka {files[recording - 1].file_label}")
     else:
-        canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount}) - porównanie {files[2*recording - 2].file_label} - {files[2*recording - 1].file_label}")
+        canvas.drawString(2 * cm, HEIGHT - _(3.5, 1), f"Porównanie {files[2*recording - 2].file_label} - {files[2*recording - 1].file_label}")
    
 
     fig = plt.figure(figsize=(4, 3))
-    plt.hist(result)
+
+    counter = {}
+
+    for i in range(min(result), max(result) + 1):
+        counter[i] = 0
+
+    for i in result:
+        counter[i] += 1
+
+    plt.bar(counter.keys(), counter.values())
     plt.xlabel('Ocena')
     plt.ylabel('Ilość osób')
     plt.title('Rozkład ocen w grupie badawczej')
@@ -135,13 +150,43 @@ def create_page(recording, result, canvas, fileset_type, exam, test_no, files, t
     imgdata.seek(0)  # rewind the data
 
     drawing=svg2rlg(imgdata)
-    renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(14, 0))
+    renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(15, 0))
 
     canvas.setFont("Tinos", 14)
     for i, string in enumerate(strings):
-        canvas.drawString(2 * cm, HEIGHT - _(15, i), string)
+        canvas.drawString(2 * cm, HEIGHT - _(16, i), string)
 
     return canvas    
+
+def comparsion_page(canvas, comparsion, exam, test_no, test_name, fileset_type):
+    canvas.showPage()
+    canvas.setFont("Tinos", 24)
+    canvas.drawString(2 * cm, HEIGHT - 2 * cm, f"Raport z badania {exam.exam_name}")
+    canvas.setFont("Tinos", 16)
+    canvas.drawString(2 * cm, HEIGHT - _(3.5, 0), f"Test {test_name} (test {test_no}/{exam.test_amount})")
+    canvas.drawString(2 * cm, HEIGHT - _(3.5, 1), f"Tabela porównawcza")
+
+    style=[('GRID',(0,0), (-1,-1), 1, colors.black),
+            # ('BOX',(0,0),(-1,-1),1,colors.black)
+            ('ALIGN',(0,0), (-1,-1),'CENTER'), 
+            ('FONTNAME', (0,0), (-1,-1), 'Tinos'),
+            ('FONTSIZE', (0,0), (-1,-1), 10),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('BACKGROUND', (0,0), (-1,0), colors.gray)
+            ]
+
+    if fileset_type == "Two File Set":
+        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[7.9*cm, 2.5*cm, 5.5*cm], style=style)
+    elif len(comparsion[0]) == 3:
+        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[5.3*cm, 5.3*cm, 5.3*cm], style=style)
+    else:
+        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[7.95*cm, 7.95*cm], style=style)
+
+    t.wrapOn(canvas, 2 * cm, HEIGHT - _(3.5, 2) - 1 * len(comparsion) * cm)
+    t.drawOn(canvas, 2 * cm, HEIGHT - _(3.5, 2) - 1 * len(comparsion) * cm)
+
+
+    return canvas
 
 
 def ACR_test(results, canvas, exam_no, test_no):
@@ -188,6 +233,7 @@ def ACR_test(results, canvas, exam_no, test_no):
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
     marks = marks[scale]
+    comparsion = [("Próbka", "Ocena", "Ocena wg. normy")]
 
     for recording, result in results.items():
         canvas = create_page(recording=recording, 
@@ -203,6 +249,9 @@ def ACR_test(results, canvas, exam_no, test_no):
                             f"{get_mark(marks, mean(result))[1]}, ({get_mark(marks, mean(result))[0]}).",
                         ]
                     )
+        comparsion.append((f"{files[recording - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
     return canvas
 
@@ -227,6 +276,7 @@ def DCR_test(results, canvas, exam_no, test_no):
     presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    comparsion = [("Porównanie", "Ocena", "Ocena wg. normy")]
 
     for recording_pair, result in results.items():
         canvas = create_page(recording=recording_pair, 
@@ -242,6 +292,9 @@ def DCR_test(results, canvas, exam_no, test_no):
                             f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."
                         ]
                     )
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
     return canvas
 
@@ -268,6 +321,7 @@ def CCR_test(results, canvas, exam_no, test_no):
     presentation = exam_test.parameter_3
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    comparsion = [("Porównanie", "Ocena", "Ocena wg. normy")]
 
     for recording_pair, result in results.items():
         canvas = create_page(recording=recording_pair, 
@@ -279,10 +333,13 @@ def CCR_test(results, canvas, exam_no, test_no):
                     files=files, 
                     test_name=exam_test.test.name, 
                     strings=[ f"Nagrania prezentowano {pres_methods[presentation]}.",
-                            f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że jakość drugiego nagrania jest",
-                            f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}) w stosunku do orginalnego nagrania.",
+                            f"Średni wynik dla tego nagrania to {f_render(mean(result))}, a więc można uznać, że jakość drugiego nagrania ",
+                            f"jest {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}) w stosunku do orginalnego nagrania.",
                         ]
                     )
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
     return canvas
 
@@ -294,6 +351,7 @@ def ABX_test(results, canvas, exam_no, test_no):
     fileset_name = exam_test.parameter_1
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    comparsion = [("Porównanie", "Ocena")]
 
     for recording_pair, result in results.items():
         canvas = create_page(recording=recording_pair, 
@@ -306,6 +364,9 @@ def ABX_test(results, canvas, exam_no, test_no):
                     test_name=exam_test.test.name, 
                     strings=[f"Różnicę między nagraniami rozpoznało {f_render(mean(result) * 100)}% badanych." ]
                     )
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result)))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
     return canvas
 
@@ -324,6 +385,7 @@ def ABCHR_test(results, canvas, exam_no, test_no):
     fileset_name = exam_test.parameter_1
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    comparsion = [("Porównanie", "Ocena", "Ocena wg. normy")]
 
     for recording_pair, result in results.items():
         canvas = create_page(recording=recording_pair, 
@@ -337,6 +399,9 @@ def ABCHR_test(results, canvas, exam_no, test_no):
                 strings=[f"Średni różnica między referencją, a ukrytym nagraniem testowym wynosi {f_render(mean(result))}, ",
                         f"a więc można uznać, że różnice są {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."]
                 )
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
     return canvas
 
@@ -347,6 +412,8 @@ def MUSHRA(results, canvas, exam_no, test_no):
     fileset_name = exam_test.parameter_1
     fileset = Fileset.objects.filter(fileset_name=fileset_name)[0]
     files = FileDestination.objects.filter(fileset=fileset).order_by('file_number')
+    comparsion = [("Próbka", "Ocena")]
+
     for recording, result in results.items():
         canvas = create_page(recording=recording, 
                 result=result, 
@@ -358,5 +425,8 @@ def MUSHRA(results, canvas, exam_no, test_no):
                 test_name=exam_test.test.name, 
                 strings=[f"Średnia ocena przeprocesowanego nagrania wynosi {mean(result)}."]
                 )
+        comparsion.append((f"{files[recording - 1].file_label}", mean(result)))
+
+    canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
         
     return canvas

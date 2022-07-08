@@ -17,6 +17,8 @@ class ExaminedPerson(models.Model):
     def __str__(self):
         return str(self.first_name) + " " + str(self.last_name)
 
+    def flatten(self):
+        return [val for val in self.dict].join('|')
 
 class Test(models.Model):
     name = models.CharField(max_length=100)

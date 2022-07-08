@@ -18,7 +18,7 @@ def index(request):
         if form.is_valid():
             create_person(request, form)
             return redirect('/welcome/')
-    return render(request, 'mainbackend/index.html', {'form': form, 'user_login': request.session.get('person')})
+    return render(request, 'mainbackend/index.html', {'form': form, 'user_login': request.session.get('person'), "home_page": "T"})
 
 
 def welcome(request):

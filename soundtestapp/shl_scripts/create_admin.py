@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password
 
 credintials = {
     'login': "atomala",
-    'password': make_password("test_hasla"),
+    'password': make_password("atatat"),
     'first_name': "Andrzej",
     'last_name': "Tomala",
 }
