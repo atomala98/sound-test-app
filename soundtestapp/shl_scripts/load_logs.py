@@ -3,7 +3,7 @@ from time import time
 
 start = time()
 
-LOG_FILE = "fake25.txt"
+LOG_FILE = "q.txt"
 
 path = f"logs\db_state\{LOG_FILE}"
 
@@ -25,29 +25,35 @@ for line in file.read().splitlines():
         continue
     elif line[:4] != 'LOG:':
         current = line
-        db_image[current] = {}
+        db_image[current] = []
     else:
         rec = load_dict(line)
-        db_image[current][rec['id']] = rec
+        db_image[current].append(rec)
+
+# queue = [
+#     Test,
+#     TestType,
+#     ExaminedPerson,
+#     Exam,
+#     ExamTest,
+#     ExaminationResult,
+#     Result,
+#     AdminACC,
+#     AdminToExam,
+#     Fileset,
+#     FileDestination
+# ]
 
 queue = [
-    Test,
-    TestType,
-    ExaminedPerson,
-    Exam,
-    ExamTest,
-    ExaminationResult,
-    Result,
-    AdminACC,
-    AdminToExam,
-    Fileset,
-    FileDestination
+    FileDestination,
+    Result
 ]
+
 
 
 for model in queue:
     name = f'{model=}'.split('.')[-1][:-2]
-    for id, rec in db_image[name].items():
+    for rec in db_image[name]:
         try:
             db_object = model(**rec)
             db_object.save()

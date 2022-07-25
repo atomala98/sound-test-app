@@ -108,8 +108,8 @@ def create_file(exam_no):
     renderPDF.draw(drawing,canvas, 3.5 * cm, HEIGHT - _(12, 0))
     
     canvas.setFont("Tinos", 14)
-    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {mean(persons_age)} lat(a).")
-    canvas.drawString(2 * cm, HEIGHT - _(13.5, 1), f"Mediana wieku osób uczestniczących w badaniu wynosi {statistics.median(persons_age)} lat(a).")
+    canvas.drawString(2 * cm, HEIGHT - _(13.5, 0), f"Średnia wieku osób uczestniczących w badaniu wynosi {f_render(mean(persons_age))} lat(a).")
+    canvas.drawString(2 * cm, HEIGHT - _(13.5, 1), f"Mediana wieku osób uczestniczących w badaniu wynosi {f_render(statistics.median(persons_age))} lat(a).")
 
     return canvas
 
@@ -175,16 +175,15 @@ def comparsion_page(canvas, comparsion, exam, test_no, test_name, fileset_type):
             ('BACKGROUND', (0,0), (-1,0), colors.gray)
             ]
 
-    if fileset_type == "Two File Set":
-        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[7.9*cm, 2.5*cm, 5.5*cm], style=style)
+    if fileset_type == "Two File Set" and len(comparsion[0]) == 3:
+        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[7.6*cm, 1*cm, 7.3*cm], style=style)
     elif len(comparsion[0]) == 3:
         t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[5.3*cm, 5.3*cm, 5.3*cm], style=style)
     else:
-        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[7.95*cm, 7.95*cm], style=style)
+        t = Table(comparsion, rowHeights=[cm]*len(comparsion), colWidths=[10*cm, 5.9*cm], style=style)
 
     t.wrapOn(canvas, 2 * cm, HEIGHT - _(3.5, 2) - 1 * len(comparsion) * cm)
     t.drawOn(canvas, 2 * cm, HEIGHT - _(3.5, 2) - 1 * len(comparsion) * cm)
-
 
     return canvas
 
@@ -249,7 +248,7 @@ def ACR_test(results, canvas, exam_no, test_no):
                             f"{get_mark(marks, mean(result))[1]}, ({get_mark(marks, mean(result))[0]}).",
                         ]
                     )
-        comparsion.append((f"{files[recording - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+        comparsion.append((f"{files[recording - 1].file_label}", f_render(mean(result)), get_mark(marks, mean(result))[1]))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
@@ -292,7 +291,7 @@ def DCR_test(results, canvas, exam_no, test_no):
                             f"{get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."
                         ]
                     )
-        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", f_render(mean(result)), get_mark(marks, mean(result))[1]))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
@@ -337,7 +336,7 @@ def CCR_test(results, canvas, exam_no, test_no):
                             f"jest {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]}) w stosunku do orginalnego nagrania.",
                         ]
                     )
-        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", f_render(mean(result)), get_mark(marks, mean(result))[1]))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
@@ -364,7 +363,7 @@ def ABX_test(results, canvas, exam_no, test_no):
                     test_name=exam_test.test.name, 
                     strings=[f"Różnicę między nagraniami rozpoznało {f_render(mean(result) * 100)}% badanych." ]
                     )
-        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result)))
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", f_render(mean(result))))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
@@ -399,7 +398,7 @@ def ABCHR_test(results, canvas, exam_no, test_no):
                 strings=[f"Średni różnica między referencją, a ukrytym nagraniem testowym wynosi {f_render(mean(result))}, ",
                         f"a więc można uznać, że różnice są {get_mark(marks, mean(result))[1]} ({get_mark(marks, mean(result))[0]})."]
                 )
-        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", mean(result), get_mark(marks, mean(result))[1]))
+        comparsion.append((f"{files[2 * recording_pair - 2].file_label} - {files[2 * recording_pair - 1].file_label}", f_render(mean(result)), get_mark(marks, mean(result))[1]))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
 
@@ -423,9 +422,9 @@ def MUSHRA(results, canvas, exam_no, test_no):
                 test_no=test_no, 
                 files=files, 
                 test_name=exam_test.test.name, 
-                strings=[f"Średnia ocena przeprocesowanego nagrania wynosi {mean(result)}."]
+                strings=[f"Średnia ocena przeprocesowanego nagrania wynosi {f_render(mean(result))}."]
                 )
-        comparsion.append((f"{files[recording - 1].file_label}", mean(result)))
+        comparsion.append((f"{files[recording].file_label}",  f_render(mean(result))))
 
     canvas = comparsion_page(canvas, comparsion, exam, test_no, exam_test.test.name, fileset.fileset_type)
         

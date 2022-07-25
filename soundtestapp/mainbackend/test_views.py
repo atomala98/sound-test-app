@@ -73,7 +73,7 @@ def dcr_test(request):
     
 def ccr_test(request): 
     if request.method == 'POST':
-        save_results(request, str(int(request.POST.get("score")) * request.session['person']['current_test']['order']))
+        save_results(request, str(-int(request.POST.get("score")) * request.session['person']['current_test']['order']))
         request.session['person']['current_test']['iteration'] += 1
         request.session.modified = True
         return redirect("Comparison Category Rating")
